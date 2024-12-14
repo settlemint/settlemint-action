@@ -57,8 +57,9 @@ jobs:
         id: test-action
         uses: ./
         with:
-          milliseconds: 2000
+          personal-access-token: ${{ secrets.SETTLEMINT_PERSONAL_ACCESS_TOKEN }}
+          command: codegen
+          version: latest
+          auto-login: true
+          auto-connect: true
 
-      - name: Print Output
-        id: output
-        run: echo "${{ steps.test-action.outputs.time }}"
