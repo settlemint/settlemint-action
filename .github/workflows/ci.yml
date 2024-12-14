@@ -69,4 +69,5 @@ jobs:
           version: latest
           auto-login: true
           auto-connect: true
-
+          workspace: ${{ secrets.SETTLEMINT_WORKSPACE }}
+          application: ${{ secrets.SETTLEMINT_APPLICATION }}
