@@ -25,6 +25,9 @@ inputs:
     description: 'SettleMint CLI version to install (defaults to latest)'
     required: false
     default: 'latest'
+  access-token:
+    description: 'SettleMint Access Token'
+    required: true
   instance:
     description:
       'SettleMint instance URL (defaults to https://console.settlemint.com)'
