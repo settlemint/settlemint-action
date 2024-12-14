@@ -14,12 +14,12 @@ permissions:
 jobs:
   test-typescript:
     name: TypeScript Tests
-    runs-on: ubuntu-latest
+    runs-on: namespace-profile-settlemint-action
 
     steps:
       - name: Checkout
         id: checkout
-        uses: actions/checkout@v4
+        uses: namespacelabs/nscloud-checkout-action@b8c45d632ce8118a5a0a51eb75a57cfccc74b8fa # v5
 
       - name: Setup Node.js
         id: setup-node
@@ -46,12 +46,12 @@ jobs:
 
   test-action:
     name: GitHub Actions Test
-    runs-on: ubuntu-latest
+    runs-on: namespace-profile-settlemint-action
 
     steps:
       - name: Checkout
         id: checkout
-        uses: actions/checkout@v4
+        uses: namespacelabs/nscloud-checkout-action@b8c45d632ce8118a5a0a51eb75a57cfccc74b8fa # v5
 
       - name: Test Local Action
         id: test-action

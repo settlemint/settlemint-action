@@ -16,12 +16,12 @@ permissions:
 jobs:
   lint:
     name: Lint Codebase
-    runs-on: ubuntu-latest
+    runs-on: namespace-profile-settlemint-action
 
     steps:
       - name: Checkout
         id: checkout
-        uses: actions/checkout@v4
+        uses: namespacelabs/nscloud-checkout-action@b8c45d632ce8118a5a0a51eb75a57cfccc74b8fa # v5
         with:
           fetch-depth: 0
 
