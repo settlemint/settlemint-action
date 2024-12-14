@@ -17,6 +17,10 @@ inputs:
     description: 'Automatically login to SettleMint'
     required: false
     default: 'true'
+  auto-connect:
+    description: 'Automatically connect to SettleMint'
+    required: false
+    default: 'true'
   version:
     description: 'SettleMint CLI version to install (defaults to latest)'
     required: false
