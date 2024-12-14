@@ -9,7 +9,7 @@
 </p>
 <br/>
 <p align="center">
-<a href="https://github.com/settlemint/settlemint-action/actions?query=branch%3Amain"><img src="https://github.com/settlemint/settlemint-action/actions/workflows/build.yml/badge.svg?event=push&branch=main" alt="CI status" /></a>
+<a href="https://github.com/settlemint/settlemint-action/actions?query=branch%3Amain"><img src="https://github.com/settlemint/settlemint-action/actions/workflows/ci.yml/badge.svg?event=push&branch=main" alt="CI status" /></a>
 <a href="https://github.com/settlemint/settlemint-action" rel="nofollow"><img src="https://img.shields.io/github/stars/settlemint/settlemint-action" alt="stars"></a>
 </p>
 
@@ -19,6 +19,8 @@
   <a href="https://github.com/settlemint/settlemint-action/issues">Issues</a>
   <br />
 </div>
+
+## Description
 
 This GitHub Action allows you to execute SettleMint CLI commands in your GitHub Actions workflow. It handles installation, authentication, and execution of CLI commands with proper environment configuration.
 
