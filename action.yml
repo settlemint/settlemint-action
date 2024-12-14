@@ -1,0 +1,79 @@
+name: 'SettleMint CLI Action'
+description: 'Execute SettleMint CLI commands in your GitHub Actions workflow'
+author: 'SettleMint'
+
+branding:
+  icon: 'terminal'
+  color: 'blue'
+
+inputs:
+  command:
+    description: 'The SettleMint CLI command to execute'
+    required: true
+  personal-access-token:
+    description: 'SettleMint Personal Access Token'
+    required: true
+  auto-login:
+    description: 'Automatically login to SettleMint'
+    required: false
+    default: 'true'
+  version:
+    description: 'SettleMint CLI version to install (defaults to latest)'
+    required: false
+    default: 'latest'
+  instance:
+    description: 'SettleMint instance URL (defaults to https://console.settlemint.com)'
+    required: false
+    default: 'https://console.settlemint.com'
+  workspace:
+    description: 'SettleMint workspace ID'
+    required: false
+  application:
+    description: 'SettleMint application ID'
+    required: false
+  blockchain-network:
+    description: 'SettleMint blockchain network ID'
+    required: false
+  blockchain-node:
+    description: 'SettleMint blockchain node ID'
+    required: false
+  load-balancer:
+    description: 'SettleMint load balancer ID'
+    required: false
+  hasura:
+    description: 'SettleMint Hasura ID'
+    required: false
+  thegraph:
+    description: 'SettleMint TheGraph ID'
+    required: false
+  portal:
+    description: 'SettleMint Portal ID'
+    required: false
+  hd-private-key:
+    description: 'SettleMint HD private key'
+    required: false
+  minio:
+    description: 'SettleMint MinIO ID'
+    required: false
+  ipfs:
+    description: 'SettleMint IPFS ID'
+    required: false
+  auth-secret:
+    description: 'SettleMint auth secret'
+    required: false
+  custom-deployment:
+    description: 'SettleMint custom deployment ID'
+    required: false
+  blockscout:
+    description: 'SettleMint Blockscout ID'
+    required: false
+  nextauth-url:
+    description: 'NextAuth URL'
+    required: false
+  smart-contract-set:
+    description: 'SettleMint smart contract set ID'
+    required: false
+
+runs:
+  using: node20
+  main: dist/index.js

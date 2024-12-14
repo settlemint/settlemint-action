@@ -1,0 +1,9 @@
+1. Create a GitHub Action for SettleMint CLI
+2. Use Node.js runtime
+3. Accept command, token, and version inputs
+4. Install SettleMint CLI with specified version (default latest)
+5. Execute provided CLI commands
+6. Handle errors and provide feedback
+7. Configure TypeScript for proper type checking
+8. Support all SettleMint environment variables as optional inputs
+9. Set predefined contract addresses as environment variables
