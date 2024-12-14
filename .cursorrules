@@ -9,3 +9,4 @@
 9. Set predefined contract addresses as environment variables
 10. Add auto-login and auto-connect functionality
 11. Add comprehensive test coverage for main functionality
+12. Configure Renovate to run `npm run package` after dependency updates

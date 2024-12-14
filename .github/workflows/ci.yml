@@ -71,3 +71,4 @@ jobs:
           auto-connect: true
           workspace: ${{ secrets.SETTLEMINT_WORKSPACE }}
           application: ${{ secrets.SETTLEMINT_APPLICATION }}
+          access-token: ${{ secrets.SETTLEMINT_ACCESS_TOKEN }}
