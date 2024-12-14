@@ -69,7 +69,8 @@ steps:
 
 | Input            | Description                    | Required |
 |------------------|--------------------------------|----------|
-| access-token     | SettleMint Access Token       | Yes      |
+| personal-access-token | SettleMint Personal Access Token | Yes      |
+| access-token     | SettleMint ApplicationAccess Token       | Yes      |
 
 ### Optional
 
@@ -91,10 +92,8 @@ steps:
 | hd-private-key     | HD private key                                  | -                                |
 | minio              | MinIO ID                                        | -                                |
 | ipfs               | IPFS ID                                         | -                                |
-| auth-secret        | Auth secret                                     | -                                |
 | custom-deployment  | Custom deployment ID                            | -                                |
 | blockscout         | Blockscout ID                                   | -                                |
-| nextauth-url       | NextAuth URL                                    | -                                |
 | smart-contract-set | Smart contract set ID                           | -                                |
 
 ## Common Use Cases

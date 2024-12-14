@@ -66,17 +66,11 @@ inputs:
   ipfs:
     description: 'SettleMint IPFS ID'
     required: false
-  auth-secret:
-    description: 'SettleMint auth secret'
-    required: false
   custom-deployment:
     description: 'SettleMint custom deployment ID'
     required: false
   blockscout:
     description: 'SettleMint Blockscout ID'
-    required: false
-  nextauth-url:
-    description: 'NextAuth URL'
     required: false
   smart-contract-set:
     description: 'SettleMint smart contract set ID'
