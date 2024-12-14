@@ -20,7 +20,7 @@
     "node": ">=21"
   },
   "scripts": {
-    "bundle": "npm run format:write && npm run package",
+    "bundle": "npm run format && npm run package",
     "ci-test": "npx jest",
     "coverage": "npx make-coverage-badge --output-path ./badges/coverage.svg",
     "format": "biome format --write .",
