@@ -1,0 +1,32 @@
+{
+  "extends": ["ultracite"],
+  "files": {
+    "ignore": [".vscode/", "dist/"]
+  },
+  "linter": {
+    "rules": {
+      "style": {
+        "noNonNullAssertion": "off",
+        "useNamingConvention": "off"
+      },
+      "nursery": {
+        "noSecrets": "off"
+      }
+    }
+  },
+  "javascript": {
+    "formatter": {
+      "lineWidth": 120
+    }
+  },
+  "css": {
+    "formatter": {
+      "lineWidth": 120
+    }
+  },
+  "json": {
+    "formatter": {
+      "lineWidth": 120
+    }
+  }
+}

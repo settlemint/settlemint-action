@@ -28,8 +28,7 @@
       "matchStrings": ["\"https://biomejs.dev/schemas/(?<currentValue>[^\"]+)/schema.json\""]
     }
   ],
-  "packageRules": [
-  ],
+  "packageRules": [],
   "hostRules": [
     {
       "timeout": 3000000

@@ -22,7 +22,8 @@ inputs:
     required: false
     default: 'latest'
   instance:
-    description: 'SettleMint instance URL (defaults to https://console.settlemint.com)'
+    description:
+      'SettleMint instance URL (defaults to https://console.settlemint.com)'
     required: false
     default: 'https://console.settlemint.com'
   workspace:

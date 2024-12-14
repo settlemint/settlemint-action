@@ -1,5 +1,5 @@
-import * as core from '@actions/core'
-import * as exec from '@actions/exec'
+import * as core from '@actions/core';
+import * as exec from '@actions/exec';
 
 const ENV_VARS = [
   'personal-access-token',
@@ -37,8 +37,8 @@ const ENV_VARS = [
   'nextauth-url',
   'smart-contract-set',
   'smart-contract-set-address',
-  'smart-contract-set-deployment-id'
-]
+  'smart-contract-set-deployment-id',
+];
 
 /**
  * The main function for the action.
@@ -46,34 +46,33 @@ const ENV_VARS = [
  */
 export async function run(): Promise<void> {
   try {
-    const command = core.getInput('command')
-    const version = core.getInput('version')
-    const autoLogin = core.getInput('auto-login')
-    const autoConnect = core.getInput('auto-connect')
+    const command = core.getInput('command');
+    const version = core.getInput('version');
+    const autoLogin = core.getInput('auto-login');
+    const autoConnect = core.getInput('auto-connect');
 
     // Install SettleMint CLI
-    core.debug('Installing SettleMint CLI...')
-    await exec.exec('npm', ['install', '-g', `@settlemint/sdk-cli@${version}`])
+    core.debug('Installing SettleMint CLI...');
+    await exec.exec('npm', ['install', '-g', `@settlemint/sdk-cli@${version}`]);
 
     // Set optional environment variables
     for (const varName of ENV_VARS) {
-      const value = core.getInput(varName)
+      const value = core.getInput(varName);
       if (value) {
-        process.env[`SETTLEMINT_${varName.replace(/-/g, '_').toUpperCase()}`] = value
+        process.env[`SETTLEMINT_${varName.replace(/-/g, '_').toUpperCase()}`] = value;
       }
     }
 
     if (autoLogin === 'true') {
-      await exec.exec('settlemint', ['login', '-a'])
+      await exec.exec('settlemint', ['login', '-a']);
 
       if (autoConnect === 'true') {
-        await exec.exec('settlemint', ['connect', '-a'])
+        await exec.exec('settlemint', ['connect', '-a']);
       }
     }
 
-    await exec.exec('settlemint', command.split(' '))
-
+    await exec.exec('settlemint', command.split(' '));
   } catch (error) {
-    if (error instanceof Error) core.setFailed(error.message)
+    if (error instanceof Error) { core.setFailed(error.message); }
   }
 }

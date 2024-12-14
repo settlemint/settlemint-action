@@ -7,3 +7,5 @@
 7. Configure TypeScript for proper type checking
 8. Support all SettleMint environment variables as optional inputs
 9. Set predefined contract addresses as environment variables
+10. Add auto-login and auto-connect functionality
+11. Add comprehensive test coverage for main functionality

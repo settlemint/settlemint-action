@@ -25667,52 +25667,78 @@ var __importStar = (this && this.__importStar) || (function () {
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.run = run;
 const core = __importStar(__nccwpck_require__(7484));
-const wait_1 = __nccwpck_require__(910);
+const exec = __importStar(__nccwpck_require__(5236));
+const ENV_VARS = [
+    'personal-access-token',
+    'instance',
+    'workspace',
+    'application',
+    'blockchain-network',
+    'blockchain-node',
+    'load-balancer',
+    'hasura',
+    'hasura-endpoint',
+    'hasura-admin-secret',
+    'thegraph',
+    'thegraph-subgraph-endpoint',
+    'thegraph-subgraph-name',
+    'portal',
+    'portal-graphql-endpoint',
+    'portal-rest-endpoint',
+    'hd-private-key',
+    'minio',
+    'minio-endpoint',
+    'minio-access-key',
+    'minio-secret-key',
+    'ipfs',
+    'ipfs-api-endpoint',
+    'ipfs-pinning-endpoint',
+    'ipfs-gateway-endpoint',
+    'auth-secret',
+    'custom-deployment',
+    'custom-deployment-endpoint',
+    'blockscout',
+    'blockscout-graphql-endpoint',
+    'blockscout-ui-endpoint',
+    'new-project-name',
+    'nextauth-url',
+    'smart-contract-set',
+    'smart-contract-set-address',
+    'smart-contract-set-deployment-id',
+];
 /**
  * The main function for the action.
  * @returns {Promise<void>} Resolves when the action is complete.
  */
 async function run() {
     try {
-        const ms = core.getInput('milliseconds');
-        // Debug logs are only output if the `ACTIONS_STEP_DEBUG` secret is true
-        core.debug(`Waiting ${ms} milliseconds ...`);
-        // Log the current timestamp, wait, then log the new timestamp
-        core.debug(new Date().toTimeString());
-        await (0, wait_1.wait)(parseInt(ms, 10));
-        core.debug(new Date().toTimeString());
-        // Set outputs for other workflow steps to use
-        core.setOutput('time', new Date().toTimeString());
+        const command = core.getInput('command');
+        const version = core.getInput('version');
+        const autoLogin = core.getInput('auto-login');
+        const autoConnect = core.getInput('auto-connect');
+        // Install SettleMint CLI
+        core.debug('Installing SettleMint CLI...');
+        await exec.exec('npm', ['install', '-g', `@settlemint/sdk-cli@${version}`]);
+        // Set optional environment variables
+        for (const varName of ENV_VARS) {
+            const value = core.getInput(varName);
+            if (value) {
+                process.env[`SETTLEMINT_${varName.replace(/-/g, '_').toUpperCase()}`] = value;
+            }
+        }
+        if (autoLogin === 'true') {
+            await exec.exec('settlemint', ['login', '-a']);
+            if (autoConnect === 'true') {
+                await exec.exec('settlemint', ['connect', '-a']);
+            }
+        }
+        await exec.exec('settlemint', command.split(' '));
     }
     catch (error) {
-        // Fail the workflow run if an error occurs
-        if (error instanceof Error)
+        if (error instanceof Error) {
             core.setFailed(error.message);
-    }
-}
-
-
-/***/ }),
-
-/***/ 910:
-/***/ ((__unused_webpack_module, exports) => {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.wait = wait;
-/**
- * Wait for a number of milliseconds.
- * @param milliseconds The number of milliseconds to wait.
- * @returns {Promise<string>} Resolves with 'done!' after the wait is over.
- */
-async function wait(milliseconds) {
-    return new Promise(resolve => {
-        if (isNaN(milliseconds)) {
-            throw new Error('milliseconds not a number');
         }
-        setTimeout(() => resolve('done!'), milliseconds);
-    });
+    }
 }
 
 
