@@ -19,11 +19,6 @@
   ],
   "labels": ["dependencies"],
   "rebaseWhen": "conflicted",
-  "postUpgradeTasks": {
-    "commands": ["npm run package"],
-    "fileFilters": ["package.json", "package-lock.json"],
-    "executionMode": "update"
-  },
   "customManagers": [
     {
       "customType": "regex",
