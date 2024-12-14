@@ -25670,6 +25670,7 @@ const core = __importStar(__nccwpck_require__(7484));
 const exec = __importStar(__nccwpck_require__(5236));
 const ENV_VARS = [
     'personal-access-token',
+    'access-token',
     'instance',
     'workspace',
     'application',

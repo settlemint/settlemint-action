@@ -3,6 +3,7 @@ import * as exec from '@actions/exec';
 
 const ENV_VARS = [
   'personal-access-token',
+  'access-token',
   'instance',
   'workspace',
   'application',
@@ -73,6 +74,8 @@ export async function run(): Promise<void> {
 
     await exec.exec('settlemint', command.split(' '));
   } catch (error) {
-    if (error instanceof Error) { core.setFailed(error.message); }
+    if (error instanceof Error) {
+      core.setFailed(error.message);
+    }
   }
 }
