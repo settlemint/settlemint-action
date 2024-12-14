@@ -25713,7 +25713,9 @@ async function run() {
                 await exec.exec('settlemint', ['connect', '-a']);
             }
         }
-        await exec.exec('settlemint', command.split(' '));
+        if (command) {
+            await exec.exec('settlemint', command.split(' '));
+        }
     }
     catch (error) {
         if (error instanceof Error) {

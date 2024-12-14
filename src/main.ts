@@ -52,7 +52,9 @@ export async function run(): Promise<void> {
       }
     }
 
-    await exec.exec('settlemint', command.split(' '));
+    if (command) {
+      await exec.exec('settlemint', command.split(' '));
+    }
   } catch (error) {
     if (error instanceof Error) {
       core.setFailed(error.message);
