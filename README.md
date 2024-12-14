@@ -40,7 +40,7 @@ This GitHub Action allows you to execute SettleMint CLI commands in your GitHub 
 steps:
   - uses: actions/checkout@v4
   - name: Run SettleMint CLI
-    uses: settlemint/settlemint-cli-action@v1
+    uses: settlemint/settlemint-cli-action@main
     with:
       command: 'workspace list'
       access-token: ${{ secrets.SETTLEMINT_ACCESS_TOKEN }}
@@ -52,7 +52,7 @@ steps:
 steps:
   - uses: actions/checkout@v4
   - name: Deploy Smart Contract
-    uses: settlemint/settlemint-cli-action@v1
+    uses: settlemint/settlemint-cli-action@main
     with:
       command: 'contract deploy MyContract'
       access-token: ${{ secrets.SETTLEMINT_ACCESS_TOKEN }}
@@ -102,7 +102,7 @@ steps:
 
 ```yaml
 - name: Deploy Contract
-  uses: settlemint/settlemint-cli-action@v1
+  uses: settlemint/settlemint-cli-action@main
   with:
     command: |
       contract compile
@@ -115,7 +115,7 @@ steps:
 
 ```yaml
 - name: List Workspaces
-  uses: settlemint/settlemint-cli-action@v1
+  uses: settlemint/settlemint-cli-action@main
   with:
     command: workspace list
     access-token: ${{ secrets.SETTLEMINT_ACCESS_TOKEN }}
@@ -125,7 +125,7 @@ steps:
 
 ```yaml
 - name: Use Specific CLI Version
-  uses: settlemint/settlemint-cli-action@v1
+  uses: settlemint/settlemint-cli-action@main
   with:
     command: --version
     version: '1.0.0'
