@@ -8,6 +8,7 @@
 8. Support all SettleMint environment variables as optional inputs
 9. Set predefined contract addresses as environment variables
 10. Add auto-login and auto-connect functionality
-11. Add comprehensive test coverage for main functionality
-12. Configure Renovate to run `npm run package` after dependency updates
-13. Create comprehensive README documentation with examples and best practices
+11. Process .env files from secrets and add them to GitHub environment
+12. Add comprehensive test coverage for main functionality
+13. Configure Renovate to run `npm run package` after dependency updates
+14. Create comprehensive README documentation with examples and best practices

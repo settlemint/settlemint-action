@@ -75,6 +75,12 @@ inputs:
   smart-contract-set:
     description: 'SettleMint smart contract set ID'
     required: false
+  dotEnvFile:
+    description: 'A Github Actions secret containing the .env file, loaded in one go for easy updates'
+    required: false
+  dotEnvLocalFile:
+    description: 'A Github Actions secret containing the .env.local file, loaded in one go for easy updates'
+    required: false
 
 runs:
   using: node20

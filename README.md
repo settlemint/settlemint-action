@@ -139,6 +139,29 @@ All inputs are automatically converted to environment variables with the `SETTLE
 - `workspace` → `SETTLEMINT_WORKSPACE`
 - `blockchain-network` → `SETTLEMINT_BLOCKCHAIN_NETWORK`
 
+### Environment Files
+The action supports loading environment variables from `.env` files. You can provide the content of your env files through the following inputs:
+
+- `dotEnvFile`: Content of your main `.env` file
+- `dotEnvLocalFile`: Content of your `.env.local` file
+
+⚠️ **Important**: Always store env file contents in GitHub Secrets:
+```yaml
+steps:
+  - uses: settlemint/settlemint-action@main
+    with:
+      dotEnvFile: ${{ secrets.MY_ENV_FILE }}
+      dotEnvLocalFile: ${{ secrets.MY_ENV_LOCAL }}
+      access-token: ${{ secrets.SETTLEMINT_ACCESS_TOKEN }}
+```
+
+The action will process these files and add all variables to the GitHub Actions environment. It handles:
+- Comments (lines starting with #)
+- Empty lines
+- Quoted values
+- Values containing = signs
+- Trailing comments
+
 ## Error Handling
 
 The action will fail if:
@@ -152,6 +175,32 @@ The action will fail if:
 - Never commit your access token directly in workflows
 - Use GitHub Secrets for sensitive information
 - Consider using OIDC for token management in production
+
+## Security Best Practices
+
+### Handling Secrets 🔒
+- **NEVER** commit access tokens, private keys or any secrets directly in your workflow files or repository
+- **ALWAYS** use GitHub Secrets for sensitive information:
+  ```yaml
+  # ✅ CORRECT - Using GitHub Secrets
+  access-token: ${{ secrets.SETTLEMINT_ACCESS_TOKEN }}
+
+  # ❌ WRONG - NEVER do this
+  access-token: "your-token-here"  # This is a security risk!
+  ```
+- Use GitHub's OIDC (OpenID Connect) for token management in production environments
+- Regularly rotate your access tokens and secrets
+- Limit secret access to only the necessary workflows and repositories
+
+### Environment Variables
+When using .env files:
+```yaml
+steps:
+  - uses: settlemint/settlemint-action@main
+    with:
+      dotEnvFile: ${{ secrets.ENV_FILE_CONTENT }}  # Store as a secret!
+      access-token: ${{ secrets.SETTLEMINT_ACCESS_TOKEN }}
+```
 
 ## Contributing
 
