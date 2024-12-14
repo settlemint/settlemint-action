@@ -1,4 +1,24 @@
-# SettleMint CLI Action
+<p align="center">
+  <img src="https://github.com/settlemint/sdk/blob/main/logo.svg" width="200px" align="center" alt="SettleMint logo" />
+  <h1 align="center">SettleMint Open Source Software</h1>
+  <p align="center">
+    ✨ <a href="https://settlemint.com">https://settlemint.com</a> ✨
+    <br/>
+    Integrate SettleMint into your application with ease.
+  </p>
+</p>
+<br/>
+<p align="center">
+<a href="https://github.com/settlemint/settlemint-action/actions?query=branch%3Amain"><img src="https://github.com/settlemint/settlemint-action/actions/workflows/build.yml/badge.svg?event=push&branch=main" alt="CI status" /></a>
+<a href="https://github.com/settlemint/settlemint-action" rel="nofollow"><img src="https://img.shields.io/github/stars/settlemint/settlemint-action" alt="stars"></a>
+</p>
+
+<div align="center">
+  <a href="https://console.settlemint.com/documentation/">Documentation</a>
+  <span>&nbsp;&nbsp;•&nbsp;&nbsp;</span>
+  <a href="https://github.com/settlemint/settlemint-action/issues">Issues</a>
+  <br />
+</div>
 
 This GitHub Action allows you to execute SettleMint CLI commands in your GitHub Actions workflow. It handles installation, authentication, and execution of CLI commands with proper environment configuration.
 
