@@ -1,5 +1,5 @@
 1. Create a GitHub Action for SettleMint CLI
-2. Use Node.js runtime
+2. Use Node.js runtime (Node 20)
 3. Accept command, token, and version inputs
 4. Install SettleMint CLI with specified version (default latest)
 5. Execute provided CLI commands
@@ -10,3 +10,4 @@
 10. Add auto-login and auto-connect functionality
 11. Add comprehensive test coverage for main functionality
 12. Configure Renovate to run `npm run package` after dependency updates
+13. Create comprehensive README documentation with examples and best practices
