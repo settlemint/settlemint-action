@@ -9,7 +9,7 @@ branding:
 inputs:
   command:
     description: 'The SettleMint CLI command to execute'
-    required: false  
+    required: false
   access-token:
     description: 'SettleMint Access Token (can be a personal or an application access token)'
     required: true
