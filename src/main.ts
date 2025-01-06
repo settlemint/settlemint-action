@@ -18,7 +18,6 @@ const ENV_VARS = [
   'ipfs',
   'custom-deployment',
   'blockscout',
-  'smart-contract-set',
 ];
 
 const ENV_VAR_PATTERN = /^[A-Za-z_][A-Za-z0-9_]*=/;

@@ -26,54 +26,51 @@ inputs:
     required: false
     default: 'latest'
   access-token:
-    description: 'SettleMint Access Token'
-    required: true
+    description: 'SettleMint Application Access Token'
+    required: false
   instance:
     description:
       'SettleMint instance URL (defaults to https://console.settlemint.com)'
     required: false
     default: 'https://console.settlemint.com'
   workspace:
-    description: 'SettleMint workspace ID'
+    description: 'SettleMint workspace unique name'
     required: false
   application:
-    description: 'SettleMint application ID'
+    description: 'SettleMint application unique name'
     required: false
   blockchain-network:
-    description: 'SettleMint blockchain network ID'
+    description: 'SettleMint blockchain network unique name'
     required: false
   blockchain-node:
-    description: 'SettleMint blockchain node ID'
+    description: 'SettleMint blockchain node unique name'
     required: false
   load-balancer:
-    description: 'SettleMint load balancer ID'
+    description: 'SettleMint load balancer unique name'
     required: false
   hasura:
-    description: 'SettleMint Hasura ID'
+    description: 'SettleMint Hasura unique name'
     required: false
   thegraph:
-    description: 'SettleMint TheGraph ID'
+    description: 'SettleMint TheGraph unique name'
     required: false
   portal:
-    description: 'SettleMint Portal ID'
+    description: 'SettleMint Portal unique name'
     required: false
   hd-private-key:
-    description: 'SettleMint HD private key'
+    description: 'SettleMint HD private key unique name'
     required: false
   minio:
-    description: 'SettleMint MinIO ID'
+    description: 'SettleMint MinIO unique name'
     required: false
   ipfs:
-    description: 'SettleMint IPFS ID'
+    description: 'SettleMint IPFS unique name'
     required: false
   custom-deployment:
-    description: 'SettleMint custom deployment ID'
+    description: 'SettleMint custom deployment unique name'
     required: false
   blockscout:
-    description: 'SettleMint Blockscout ID'
-    required: false
-  smart-contract-set:
-    description: 'SettleMint smart contract set ID'
+    description: 'SettleMint Blockscout unique name'
     required: false
   dotEnvFile:
     description: 'A Github Actions secret containing the .env file, loaded in one go for easy updates'
