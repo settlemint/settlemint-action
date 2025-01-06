@@ -25668,6 +25668,7 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.run = run;
 const core = __importStar(__nccwpck_require__(7484));
 const exec = __importStar(__nccwpck_require__(5236));
+process.env.CI = 'true';
 const ENV_VARS = [
     'access-token',
     'instance',
