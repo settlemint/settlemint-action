@@ -1,6 +1,8 @@
 import * as core from '@actions/core';
 import * as exec from '@actions/exec';
 
+process.env.CI = 'true';
+
 const ENV_VARS = [
   'access-token',
   'instance',
