@@ -7,7 +7,7 @@
 7. Configure TypeScript for proper type checking
 8. Support all SettleMint environment variables as optional inputs
 9. Set predefined contract addresses as environment variables
-10. Add auto-login and auto-connect functionality
+10. Add auto-connect functionality
 11. Process .env files from secrets and add them to GitHub environment
 12. Add comprehensive test coverage for main functionality
 13. Configure Renovate to run `npm run package` after dependency updates

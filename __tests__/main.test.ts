@@ -36,8 +36,6 @@ describe('action', () => {
           return 'status';
         case 'version':
           return 'latest';
-        case 'auto-login':
-          return 'false';
         case 'auto-connect':
           return 'false';
         default:
@@ -53,17 +51,17 @@ describe('action', () => {
     expect(errorMock).not.toHaveBeenCalled();
   });
 
-  it('handles auto-login and auto-connect', async () => {
+  it('handles auto-connect when using a personal access token', async () => {
     getInputMock.mockImplementation((name) => {
       switch (name) {
         case 'command':
           return 'status';
         case 'version':
           return 'latest';
-        case 'auto-login':
-          return 'true';
         case 'auto-connect':
           return 'true';
+        case 'access-token':
+          return 'sm_pat_1234567890';
         default:
           return '';
       }
@@ -76,6 +74,31 @@ describe('action', () => {
     expect(execMock).toHaveBeenNthCalledWith(2, 'settlemint', ['login', '-a']);
     expect(execMock).toHaveBeenNthCalledWith(3, 'settlemint', ['connect', '-a']);
     expect(execMock).toHaveBeenNthCalledWith(4, 'settlemint', ['status']);
+  });
+
+  it('does not auto-connect when using an application access token', async () => {
+    getInputMock.mockImplementation((name) => {
+      switch (name) {
+        case 'command':
+          return 'status';
+        case 'version':
+          return 'latest';
+        case 'auto-connect':
+          return 'true';
+        case 'access-token':
+          return 'sm_aat_1234567890';
+        default:
+          return '';
+      }
+    });
+
+    await main.run();
+    expect(runMock).toHaveReturned();
+
+    expect(execMock).toHaveBeenNthCalledWith(1, 'npm', ['install', '-g', '@settlemint/sdk-cli@latest']);
+    expect(execMock).not.toHaveBeenCalledWith('settlemint', ['login', '-a']);
+    expect(execMock).not.toHaveBeenCalledWith('settlemint', ['connect', '-a']);
+    expect(execMock).toHaveBeenNthCalledWith(2, 'settlemint', ['status']);
   });
 
   it('sets environment variables when provided', async () => {
