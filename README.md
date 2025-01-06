@@ -100,9 +100,7 @@ steps:
 - name: Deploy Contract
   uses: settlemint/settlemint-action@main
   with:
-    command: |
-      scs hardhat build
-      scs hardhat deploy remote --accept-defaults
+    command: scs hardhat deploy remote --accept-defaults
     access-token: ${{ secrets.SETTLEMINT_ACCESS_TOKEN }}
     workspace: ${{ vars.WORKSPACE_UNIQUE_NAME }}
 ```

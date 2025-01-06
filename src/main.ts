@@ -86,7 +86,6 @@ export async function run(): Promise<void> {
         } else {
           process.env[`SETTLEMINT_${varName.replace(/-/g, '_').toUpperCase()}`] = value;
         }
-        process.env[`SETTLEMINT_${varName.replace(/-/g, '_').toUpperCase()}`] = value;
       }
     }
 
