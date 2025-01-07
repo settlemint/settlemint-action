@@ -42,7 +42,7 @@ steps:
   - name: Run SettleMint CLI
     uses: settlemint/settlemint-action@main
     with:
-      command: 'workspace list'
+      command: "workspace list"
       access-token: ${{ secrets.SETTLEMINT_ACCESS_TOKEN }}
 ```
 
@@ -54,47 +54,43 @@ steps:
   - name: Deploy Smart Contract
     uses: settlemint/settlemint-action@main
     with:
-      command: 'contract deploy MyContract'
+      command: "scs hardhat deploy remote --accept-defaults"
       access-token: ${{ secrets.SETTLEMINT_ACCESS_TOKEN }}
-      version: '1.0.0'
-      workspace: 'my-workspace-id'
-      blockchain-network: 'my-network-id'
-      auto-login: 'true'
-      auto-connect: 'true'
+      version: "1.0.0"
+      workspace: "my-workspace-ae70"
+      blockchain-node: "my-node-3b8e"
+      auto-connect: "true"
 ```
 
 ## Inputs
 
 ### Required
 
-| Input            | Description                    | Required |
-|------------------|--------------------------------|----------|
-| personal-access-token | SettleMint Personal Access Token | Yes      |
-| access-token     | SettleMint ApplicationAccess Token       | Yes      |
+| Input        | Description                                                                | Required |
+| ------------ | -------------------------------------------------------------------------- | -------- |
+| access-token | SettleMint Access Token (can be a personal or an application access token) | Yes      |
 
 ### Optional
 
-| Input              | Description                                      | Default                           |
-|--------------------|--------------------------------------------------|----------------------------------|
-| command            | CLI command to execute                           | -                                |
-| version            | CLI version to install                           | 'latest'                         |
-| auto-login         | Automatically login to SettleMint                | 'true'                           |
-| auto-connect       | Automatically connect to workspace               | 'true'                           |
-| instance           | SettleMint instance URL                         | 'https://console.settlemint.com' |
-| workspace          | Workspace ID                                     | -                                |
-| application        | Application ID                                   | -                                |
-| blockchain-network | Blockchain network ID                           | -                                |
-| blockchain-node    | Blockchain node ID                              | -                                |
-| load-balancer      | Load balancer ID                                | -                                |
-| hasura             | Hasura ID                                       | -                                |
-| thegraph           | TheGraph ID                                     | -                                |
-| portal             | Portal ID                                       | -                                |
-| hd-private-key     | HD private key                                  | -                                |
-| minio              | MinIO ID                                        | -                                |
-| ipfs               | IPFS ID                                         | -                                |
-| custom-deployment  | Custom deployment ID                            | -                                |
-| blockscout         | Blockscout ID                                   | -                                |
-| smart-contract-set | Smart contract set ID                           | -                                |
+| Input              | Description                        | Default                                                             |
+| ------------------ | ---------------------------------- | ------------------------------------------------------------------- |
+| command            | CLI command to execute             | -                                                                   |
+| version            | CLI version to install             | 'latest'                                                            |
+| auto-connect       | Automatically connect to workspace | 'true' (only executed when access-token is a personal access token) |
+| instance           | SettleMint instance URL            | 'https://console.settlemint.com'                                    |
+| workspace          | Workspace unique name              | -                                                                   |
+| application        | Application unique name            | -                                                                   |
+| blockchain-network | Blockchain network unique name     | -                                                                   |
+| blockchain-node    | Blockchain node unique name        | -                                                                   |
+| load-balancer      | Load balancer unique name          | -                                                                   |
+| hasura             | Hasura unique name                 | -                                                                   |
+| thegraph           | TheGraph unique name               | -                                                                   |
+| portal             | Portal unique name                 | -                                                                   |
+| hd-private-key     | HD private key                     | -                                                                   |
+| minio              | MinIO unique name                  | -                                                                   |
+| ipfs               | IPFS unique name                   | -                                                                   |
+| custom-deployment  | Custom deployment unique name      | -                                                                   |
+| blockscout         | Blockscout unique name             | -                                                                   |
 
 ## Common Use Cases
 
@@ -104,11 +100,9 @@ steps:
 - name: Deploy Contract
   uses: settlemint/settlemint-action@main
   with:
-    command: |
-      contract compile
-      contract deploy MyContract
+    command: scs hardhat deploy remote --accept-defaults
     access-token: ${{ secrets.SETTLEMINT_ACCESS_TOKEN }}
-    workspace: ${{ vars.WORKSPACE_ID }}
+    workspace: ${{ vars.WORKSPACE_UNIQUE_NAME }}
 ```
 
 ### Managing Workspaces
@@ -128,7 +122,7 @@ steps:
   uses: settlemint/settlemint-action@main
   with:
     command: --version
-    version: '1.0.0'
+    version: "1.0.0"
     access-token: ${{ secrets.SETTLEMINT_ACCESS_TOKEN }}
 ```
 
@@ -140,12 +134,14 @@ All inputs are automatically converted to environment variables with the `SETTLE
 - `blockchain-network` → `SETTLEMINT_BLOCKCHAIN_NETWORK`
 
 ### Environment Files
+
 The action supports loading environment variables from `.env` files. You can provide the content of your env files through the following inputs:
 
 - `dotEnvFile`: Content of your main `.env` file
 - `dotEnvLocalFile`: Content of your `.env.local` file
 
 ⚠️ **Important**: Always store env file contents in GitHub Secrets:
+
 ```yaml
 steps:
   - uses: settlemint/settlemint-action@main
@@ -156,6 +152,7 @@ steps:
 ```
 
 The action will process these files and add all variables to the GitHub Actions environment. It handles:
+
 - Comments (lines starting with #)
 - Empty lines
 - Quoted values
@@ -165,6 +162,7 @@ The action will process these files and add all variables to the GitHub Actions 
 ## Error Handling
 
 The action will fail if:
+
 - Invalid access token is provided
 - Required inputs are missing
 - CLI command execution fails
@@ -179,8 +177,10 @@ The action will fail if:
 ## Security Best Practices
 
 ### Handling Secrets 🔒
+
 - **NEVER** commit access tokens, private keys or any secrets directly in your workflow files or repository
 - **ALWAYS** use GitHub Secrets for sensitive information:
+
   ```yaml
   # ✅ CORRECT - Using GitHub Secrets
   access-token: ${{ secrets.SETTLEMINT_ACCESS_TOKEN }}
@@ -188,17 +188,20 @@ The action will fail if:
   # ❌ WRONG - NEVER do this
   access-token: "your-token-here"  # This is a security risk!
   ```
+
 - Use GitHub's OIDC (OpenID Connect) for token management in production environments
 - Regularly rotate your access tokens and secrets
 - Limit secret access to only the necessary workflows and repositories
 
 ### Environment Variables
+
 When using .env files:
+
 ```yaml
 steps:
   - uses: settlemint/settlemint-action@main
     with:
-      dotEnvFile: ${{ secrets.ENV_FILE_CONTENT }}  # Store as a secret!
+      dotEnvFile: ${{ secrets.ENV_FILE_CONTENT }} # Store as a secret!
       access-token: ${{ secrets.SETTLEMINT_ACCESS_TOKEN }}
 ```
 
@@ -214,4 +217,3 @@ This project is licensed under the FSL-1.1-MIT License - see the [LICENSE](LICEN
 
 - 📚 [SettleMint Documentation](https://console.settlemint.com/documentation)
 - 📧 [Support Email](mailto:support@settlemint.com)
-

@@ -1,8 +1,9 @@
 import * as core from '@actions/core';
 import * as exec from '@actions/exec';
 
+process.env.CI = 'true';
+
 const ENV_VARS = [
-  'personal-access-token',
   'access-token',
   'instance',
   'workspace',
@@ -18,7 +19,6 @@ const ENV_VARS = [
   'ipfs',
   'custom-deployment',
   'blockscout',
-  'smart-contract-set',
 ];
 
 const ENV_VAR_PATTERN = /^[A-Za-z_][A-Za-z0-9_]*=/;
@@ -60,7 +60,8 @@ export async function run(): Promise<void> {
   try {
     const command = core.getInput('command');
     const version = core.getInput('version');
-    const autoLogin = core.getInput('auto-login');
+    const accessToken = core.getInput('access-token');
+    const autoLogin = isPersonalAccessToken(accessToken);
     const autoConnect = core.getInput('auto-connect');
 
     // Install SettleMint CLI
@@ -82,11 +83,15 @@ export async function run(): Promise<void> {
     for (const varName of ENV_VARS) {
       const value = core.getInput(varName);
       if (value) {
-        process.env[`SETTLEMINT_${varName.replace(/-/g, '_').toUpperCase()}`] = value;
+        if (varName === 'access-token' && isPersonalAccessToken(value)) {
+          process.env.SETTLEMINT_PERSONAL_ACCESS_TOKEN = value;
+        } else {
+          process.env[`SETTLEMINT_${varName.replace(/-/g, '_').toUpperCase()}`] = value;
+        }
       }
     }
 
-    if (autoLogin === 'true') {
+    if (autoLogin) {
       await exec.exec('settlemint', ['login', '-a']);
 
       if (autoConnect === 'true') {
@@ -102,4 +107,8 @@ export async function run(): Promise<void> {
       core.setFailed(error.message);
     }
   }
+}
+
+function isPersonalAccessToken(token: string): boolean {
+  return token?.startsWith('sm_pat_');
 }
