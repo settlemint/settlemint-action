@@ -64,7 +64,7 @@ jobs:
         id: test-action
         uses: ./
         with:
-          command: logout
+          command: codegen
           workspace: ${{ secrets.SETTLEMINT_WORKSPACE }}
           application: ${{ secrets.SETTLEMINT_APPLICATION }}
           access-token: ${{ secrets.SETTLEMINT_PERSONAL_ACCESS_TOKEN }}
