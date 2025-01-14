@@ -54,7 +54,7 @@
     "@biomejs/biome": "^1.9.4",
     "@github/local-action": "^2.5.0",
     "@jest/globals": "^29.7.0",
-    "@settlemint/sdk-cli": "^0.9.3",
+    "@settlemint/sdk-cli": "^1.0.0",
     "@types/jest": "^29.5.14",
     "@types/node": "^22.10.5",
     "@vercel/ncc": "^0.38.3",
