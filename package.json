@@ -12,7 +12,11 @@
   "bugs": {
     "url": "https://github.com/actions/typescript-action/issues"
   },
-  "keywords": ["actions", "node", "setup"],
+  "keywords": [
+    "actions",
+    "node",
+    "setup"
+  ],
   "exports": {
     ".": "./dist/index.js"
   },
@@ -37,15 +41,29 @@
     "verbose": true,
     "clearMocks": true,
     "testEnvironment": "node",
-    "moduleFileExtensions": ["js", "ts"],
-    "testMatch": ["**/*.test.ts"],
-    "testPathIgnorePatterns": ["/node_modules/", "/dist/"],
+    "moduleFileExtensions": [
+      "js",
+      "ts"
+    ],
+    "testMatch": [
+      "**/*.test.ts"
+    ],
+    "testPathIgnorePatterns": [
+      "/node_modules/",
+      "/dist/"
+    ],
     "transform": {
       "^.+\\.ts$": "ts-jest"
     },
-    "coverageReporters": ["json-summary", "text", "lcov"],
+    "coverageReporters": [
+      "json-summary",
+      "text",
+      "lcov"
+    ],
     "collectCoverage": true,
-    "collectCoverageFrom": ["./src/**"]
+    "collectCoverageFrom": [
+      "./src/**"
+    ]
   },
   "dependencies": {
     "@actions/core": "^1.11.1"
@@ -63,5 +81,8 @@
     "ts-jest": "^29.2.5",
     "typescript": "^5.7.3",
     "ultracite": "^4.1.15"
+  },
+  "overrides": {
+    "undici@<=6.15.0": "6.15.0"
   }
 }
