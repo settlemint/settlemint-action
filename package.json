@@ -70,7 +70,7 @@
   },
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",
-    "@github/local-action": "^2.5.0",
+    "@github/local-action": "^3.0.0",
     "@jest/globals": "^29.7.0",
     "@settlemint/sdk-cli": "^1.0.0",
     "@types/jest": "^29.5.14",
