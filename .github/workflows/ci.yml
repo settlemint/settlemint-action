@@ -19,7 +19,7 @@ jobs:
     steps:
       - name: Checkout
         id: checkout
-        uses: namespacelabs/nscloud-checkout-action@b8c45d632ce8118a5a0a51eb75a57cfccc74b8fa # v5
+        uses: namespacelabs/nscloud-checkout-action@63f88aa089f855c0d888a2b1baffcbc44cc7262e # v6
 
       - name: Setup Node.js
         id: setup-node
@@ -51,7 +51,7 @@ jobs:
     steps:
       - name: Checkout
         id: checkout
-        uses: namespacelabs/nscloud-checkout-action@b8c45d632ce8118a5a0a51eb75a57cfccc74b8fa # v5
+        uses: namespacelabs/nscloud-checkout-action@63f88aa089f855c0d888a2b1baffcbc44cc7262e # v6
 
       - name: Setup Node.js
         id: setup-node
