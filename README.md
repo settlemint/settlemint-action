@@ -111,7 +111,7 @@ steps:
 - name: List Workspaces
   uses: settlemint/settlemint-action@main
   with:
-    command: workspace list
+    command: platform list workspaces
     access-token: ${{ secrets.SETTLEMINT_ACCESS_TOKEN }}
 ```
 
