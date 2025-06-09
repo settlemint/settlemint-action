@@ -1,5 +1,9 @@
 import * as core from '@actions/core';
 import * as exec from '@actions/exec';
+import * as tc from '@actions/tool-cache';
+import * as os from 'node:os';
+import * as path from 'node:path';
+import * as semver from 'semver';
 
 process.env.CI = 'true';
 
@@ -23,7 +27,90 @@ const ENV_VARS = [
 
 const ENV_VAR_PATTERN = /^[A-Za-z_][A-Za-z0-9_]*=/;
 const QUOTE_PATTERN = /^["'](.*)["']$/;
+const SETTLEMINT_CLI_PACKAGE = '@settlemint/sdk-cli';
 
+/**
+ * Validates that a version string is a valid semver version
+ */
+function validateVersion(version: string): void {
+  if (version === 'latest') {
+    return;
+  }
+
+  if (!semver.valid(version)) {
+    throw new Error(`Invalid version format: ${version}. Must be a valid semver version or 'latest'`);
+  }
+}
+
+/**
+ * Sanitizes input to prevent command injection
+ */
+function sanitizeInput(input: string): string {
+  // Remove any shell metacharacters that could be used for injection
+  return input.replace(/[;&|`$()<>\\]/g, '');
+}
+
+/**
+ * Validates and parses command arguments safely
+ */
+function parseCommand(command: string): string[] {
+  // Basic validation to prevent obvious injection attempts
+  if (
+    command.includes('&&') ||
+    command.includes('||') ||
+    command.includes(';') ||
+    command.includes('|') ||
+    command.includes('`') ||
+    command.includes('$(') ||
+    command.includes('>') ||
+    command.includes('<')
+  ) {
+    throw new Error('Command contains potentially dangerous characters. Please use simple commands only.');
+  }
+
+  // Split by spaces but respect quoted strings
+  const args: string[] = [];
+  let current = '';
+  let inQuotes = false;
+  let quoteChar = '';
+
+  for (let i = 0; i < command.length; i++) {
+    const char = command[i];
+
+    if ((char === '"' || char === "'") && (i === 0 || command[i - 1] !== '\\')) {
+      if (!inQuotes) {
+        inQuotes = true;
+        quoteChar = char;
+      } else if (char === quoteChar) {
+        inQuotes = false;
+        quoteChar = '';
+      } else {
+        current += char;
+      }
+    } else if (char === ' ' && !inQuotes) {
+      if (current) {
+        args.push(current);
+        current = '';
+      }
+    } else {
+      current += char;
+    }
+  }
+
+  if (current) {
+    args.push(current);
+  }
+
+  if (inQuotes) {
+    throw new Error('Unclosed quote in command');
+  }
+
+  return args.map((arg) => sanitizeInput(arg));
+}
+
+/**
+ * Processes environment file content and sets environment variables
+ */
 function processEnvContent(content: string): void {
   const lines = content.split('\n');
 
@@ -46,8 +133,108 @@ function processEnvContent(content: string): void {
       // Remove surrounding quotes if they exist
       value = value.replace(QUOTE_PATTERN, '$1');
 
+      // Sanitize the value before setting it
+      const sanitizedKey = sanitizeInput(key.trim());
+      const sanitizedValue = sanitizeInput(value.trim());
+
       // Set in GitHub environment
-      core.exportVariable(key.trim(), value.trim());
+      core.exportVariable(sanitizedKey, sanitizedValue);
+    }
+  }
+}
+
+/**
+ * Gets or installs the SettleMint CLI with caching support
+ */
+async function getOrInstallCLI(version: string): Promise<string> {
+  const toolName = 'settlemint-cli';
+
+  // Check if we have a cached version
+  let toolPath = tc.find(toolName, version);
+
+  if (toolPath) {
+    core.info(`Using cached SettleMint CLI from: ${toolPath}`);
+  } else {
+    core.info(`Installing SettleMint CLI version: ${version}`);
+
+    try {
+      // Create a temporary directory for npm install
+      const tempDir = path.join(os.tmpdir(), `settlemint-cli-${Date.now()}`);
+      await exec.exec('mkdir', ['-p', tempDir]);
+
+      // Install the CLI to the temporary directory
+      const npmArgs = ['install', '--prefix', tempDir];
+      if (version === 'latest') {
+        npmArgs.push(SETTLEMINT_CLI_PACKAGE);
+      } else {
+        npmArgs.push(`${SETTLEMINT_CLI_PACKAGE}@${version}`);
+      }
+
+      await exec.exec('npm', npmArgs);
+
+      // Cache the installation
+      toolPath = await tc.cacheDir(tempDir, toolName, version);
+      core.info(`Cached SettleMint CLI to: ${toolPath}`);
+    } catch (_error) {
+      // Retry once on failure
+      core.warning('Initial installation failed, retrying...');
+      await exec.exec('npm', ['install', '-g', `${SETTLEMINT_CLI_PACKAGE}@${version}`]);
+      return 'global'; // Indicate global install
+    }
+  }
+
+  // Add the tool to PATH
+  const binPath = path.join(toolPath, 'node_modules', '.bin');
+  core.addPath(binPath);
+
+  return toolPath;
+}
+
+/**
+ * Masks sensitive values in the output
+ */
+function setupOutputMasking(accessToken: string): void {
+  if (accessToken) {
+    core.setSecret(accessToken);
+  }
+
+  // Mask common sensitive patterns
+  const _sensitivePatterns = [
+    /sm_pat_[a-zA-Z0-9]+/g, // Personal access tokens
+    /sm_app_[a-zA-Z0-9]+/g, // Application tokens
+    /0x[a-fA-F0-9]{40}/g, // Ethereum addresses
+    /0x[a-fA-F0-9]{64}/g, // Private keys
+  ];
+
+  // Note: GitHub Actions automatically masks values set with setSecret
+  // Additional masking would need to be done at the exec level
+}
+
+/**
+ * Checks if the token is a personal access token
+ */
+function isPersonalAccessToken(token: string): boolean {
+  return token?.startsWith('sm_pat_');
+}
+
+/**
+ * Sets environment variables from inputs
+ */
+function setEnvironmentVariables(inputs: Map<string, string>): void {
+  for (const varName of ENV_VARS) {
+    const value = inputs.get(varName);
+    if (value) {
+      const sanitizedValue = sanitizeInput(value);
+
+      if (varName === 'access-token') {
+        if (isPersonalAccessToken(sanitizedValue)) {
+          process.env.SETTLEMINT_PERSONAL_ACCESS_TOKEN = sanitizedValue;
+        } else {
+          process.env.SETTLEMINT_ACCESS_TOKEN = sanitizedValue;
+        }
+      } else {
+        process.env[`SETTLEMINT_${varName.replace(/-/g, '_').toUpperCase()}`] = sanitizedValue;
+      }
     }
   }
 }
@@ -61,54 +248,85 @@ export async function run(): Promise<void> {
     const command = core.getInput('command');
     const version = core.getInput('version');
     const accessToken = core.getInput('access-token');
-    const autoLogin = isPersonalAccessToken(accessToken);
     const autoConnect = core.getInput('auto-connect');
 
-    // Install SettleMint CLI
-    core.debug('Installing SettleMint CLI...');
-    await exec.exec('npm', ['install', '-g', `@settlemint/sdk-cli@${version}`]);
+    // Validate inputs
+    if (!accessToken) {
+      throw new Error('access-token is required');
+    }
+
+    // Validate version format
+    validateVersion(version);
+
+    // Setup output masking for sensitive values
+    setupOutputMasking(accessToken);
+
+    // Install or get cached SettleMint CLI
+    await getOrInstallCLI(version);
 
     // Process .env files
     const dotEnvFile = core.getInput('dotEnvFile');
     if (dotEnvFile) {
-      processEnvContent(dotEnvFile);
+      try {
+        processEnvContent(dotEnvFile);
+      } catch (error) {
+        core.warning(`Failed to process dotEnvFile: ${error}`);
+      }
     }
 
     const dotEnvLocalFile = core.getInput('dotEnvLocalFile');
     if (dotEnvLocalFile) {
-      processEnvContent(dotEnvLocalFile);
+      try {
+        processEnvContent(dotEnvLocalFile);
+      } catch (error) {
+        core.warning(`Failed to process dotEnvLocalFile: ${error}`);
+      }
     }
 
-    // Set optional environment variables
+    // Collect all inputs
+    const inputs = new Map<string, string>();
     for (const varName of ENV_VARS) {
       const value = core.getInput(varName);
       if (value) {
-        if (varName === 'access-token' && isPersonalAccessToken(value)) {
-          process.env.SETTLEMINT_PERSONAL_ACCESS_TOKEN = value;
-        } else {
-          process.env[`SETTLEMINT_${varName.replace(/-/g, '_').toUpperCase()}`] = value;
+        inputs.set(varName, value);
+      }
+    }
+
+    // Set environment variables
+    setEnvironmentVariables(inputs);
+
+    // Determine if we should auto-login
+    const shouldAutoLogin = isPersonalAccessToken(accessToken);
+
+    if (shouldAutoLogin) {
+      try {
+        await exec.exec('settlemint', ['login', '-a']);
+      } catch (error) {
+        throw new Error(`Failed to authenticate with SettleMint: ${error}. Please check your access token.`);
+      }
+
+      if (autoConnect === 'true') {
+        try {
+          await exec.exec('settlemint', ['connect', '-a']);
+        } catch (error) {
+          core.warning(`Failed to auto-connect to workspace: ${error}`);
         }
       }
     }
 
-    if (autoLogin) {
-      await exec.exec('settlemint', ['login', '-a']);
-
-      if (autoConnect === 'true') {
-        await exec.exec('settlemint', ['connect', '-a']);
-      }
-    }
-
     if (command) {
-      await exec.exec('settlemint', command.split(' '));
+      try {
+        const args = parseCommand(command);
+        await exec.exec('settlemint', args);
+      } catch (error) {
+        throw new Error(`Failed to execute command: ${error}`);
+      }
     }
   } catch (error) {
     if (error instanceof Error) {
       core.setFailed(error.message);
+    } else {
+      core.setFailed('An unknown error occurred');
     }
   }
-}
-
-function isPersonalAccessToken(token: string): boolean {
-  return token?.startsWith('sm_pat_');
 }

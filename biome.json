@@ -17,7 +17,8 @@
   "javascript": {
     "formatter": {
       "lineWidth": 120
-    }
+    },
+    "globals": ["jest", "describe", "it", "beforeEach", "expect"]
   },
   "css": {
     "formatter": {

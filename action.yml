@@ -12,9 +12,9 @@ inputs:
     required: false
   access-token:
     description: 'SettleMint Access Token (can be a personal or an application access token)'
-    required: true
+    required: false
   auto-connect:
-    description: 'Automatically connect to SettleMint (only executed when access-token is a personal access token)'
+    description: 'Automatically connect to SettleMint'
     required: false
     default: 'true'
   version:

@@ -91,6 +91,8 @@ steps:
 | ipfs               | IPFS unique name                   | -                                                                   |
 | custom-deployment  | Custom deployment unique name      | -                                                                   |
 | blockscout         | Blockscout unique name             | -                                                                   |
+| dotEnvFile         | .env file content (store in secrets) | -                                                                 |
+| dotEnvLocalFile    | .env.local file content (store in secrets) | -                                                           |
 
 ## Common Use Cases
 
@@ -205,6 +207,86 @@ steps:
       access-token: ${{ secrets.SETTLEMINT_ACCESS_TOKEN }}
 ```
 
+## Troubleshooting
+
+### Common Issues
+
+#### Invalid Access Token
+**Error**: `Failed to authenticate with SettleMint: Error: Process completed with exit code 1. Please check your access token.`
+
+**Solution**: 
+- Ensure your access token is correctly stored in GitHub Secrets
+- Verify the token hasn't expired
+- Check that you're using the correct token format:
+  - Personal Access Tokens: `sm_pat_xxxxx`
+  - Application Tokens: `sm_app_xxxxx`
+
+#### Command Injection Prevention
+**Error**: `Command contains potentially dangerous characters. Please use simple commands only.`
+
+**Solution**:
+- Avoid using shell operators like `&&`, `||`, `;`, `|`, or backticks
+- Use simple, direct commands
+- If you need to run multiple commands, use multiple action steps
+
+#### Version Installation Failures
+**Error**: `Invalid version format: x.x.x. Must be a valid semver version or 'latest'`
+
+**Solution**:
+- Use valid semantic version numbers (e.g., `1.0.0`, `2.1.3`)
+- Use `latest` for the most recent version
+- Don't use version ranges or npm tags other than `latest`
+
+#### Environment Variable Issues
+**Problem**: Environment variables from `.env` files aren't being loaded
+
+**Solution**:
+- Ensure the env file content is stored in GitHub Secrets
+- Check that the file content follows the correct format:
+  ```
+  KEY=value
+  # Comments are supported
+  QUOTED_VALUE="value with spaces"
+  ```
+- Verify no shell metacharacters are in your values
+
+#### CLI Not Found
+**Error**: `settlemint: command not found`
+
+**Solution**:
+- The action should automatically install the CLI
+- If using a self-hosted runner, ensure npm is available
+- Check the action logs for installation errors
+
+### Debugging Tips
+
+1. **Enable Debug Logging**:
+   ```yaml
+   - name: Run SettleMint CLI
+     uses: settlemint/settlemint-action@main
+     env:
+       ACTIONS_STEP_DEBUG: true
+     with:
+       command: "your-command"
+       access-token: ${{ secrets.SETTLEMINT_ACCESS_TOKEN }}
+   ```
+
+2. **Check Token Format**:
+   Personal access tokens start with `sm_pat_`, while application tokens start with `sm_app_`. The action behaves differently based on the token type.
+
+3. **Verify Workspace Connection**:
+   If auto-connect fails, try connecting manually first:
+   ```yaml
+   - name: Connect to Workspace
+     uses: settlemint/settlemint-action@main
+     with:
+       command: "connect -w your-workspace-id"
+       access-token: ${{ secrets.SETTLEMINT_ACCESS_TOKEN }}
+   ```
+
+4. **Cache Issues**:
+   The action caches CLI installations. If you experience issues, the cache will be automatically invalidated when changing versions.
+
 ## Contributing
 
 Contributions are welcome! Please read our [Contributing Guide](./.github/CONTRIBUTING.md) for details on our code of conduct and the process for submitting pull requests.
@@ -216,4 +298,5 @@ This project is licensed under the FSL-1.1-MIT License - see the [LICENSE](LICEN
 ## Support
 
 - 📚 [SettleMint Documentation](https://console.settlemint.com/documentation)
+- 💬 [GitHub Issues](https://github.com/settlemint/settlemint-action/issues)
 - 📧 [Support Email](mailto:support@settlemint.com)
