@@ -113,6 +113,7 @@ describe('action', () => {
     await main.run();
     expect(runMock).toHaveReturned();
 
+<<<<<<< Updated upstream
     // Should use cached version
     expect(findMock).toHaveBeenCalledWith('settlemint-cli', 'latest');
     expect(addPathMock).toHaveBeenCalled();
@@ -124,6 +125,11 @@ describe('action', () => {
     expect(execMock).toHaveBeenCalledWith('settlemint', ['login', '-a']);
     expect(execMock).toHaveBeenCalledWith('settlemint', ['connect', '-a']);
     expect(execMock).toHaveBeenCalledWith('settlemint', ['status']);
+=======
+    expect(execMock).toHaveBeenNthCalledWith(1, 'npm', ['install', '-g', '@settlemint/sdk-cli@latest']);
+    expect(execMock).toHaveBeenNthCalledWith(2, 'settlemint', ['login', '-a']);
+    expect(execMock).toHaveBeenNthCalledWith(3, 'settlemint', ['connect', '-a']);
+>>>>>>> Stashed changes
   });
 
   it('does not auto-connect when using an application access token', async () => {

@@ -1,3 +1,4 @@
+import * as cache from '@actions/cache';
 import * as core from '@actions/core';
 import * as exec from '@actions/exec';
 import * as tc from '@actions/tool-cache';
@@ -250,14 +251,19 @@ export async function run(): Promise<void> {
     const accessToken = core.getInput('access-token');
     const autoConnect = core.getInput('auto-connect');
 
-    // Validate version format
-    validateVersion(version);
+    // Setup cache
+    const npmCache = path.join(os.homedir(), '.npm');
+    const cacheKey = `settlemint-cli-${version}-${os.platform()}-${os.arch()}`;
 
-    // Setup output masking for sensitive values
-    setupOutputMasking(accessToken);
+    try {
+      await cache.restoreCache([npmCache], cacheKey);
+    } catch (error) {
+      core.warning(`Cache restore failed, proceeding with download: ${error}`);
+    }
 
-    // Install or get cached SettleMint CLI
-    await getOrInstallCLI(version);
+    // Use SettleMint CLI
+    core.debug('Using SettleMint CLI...');
+    const settlemintCmd = `npx -y @settlemint/sdk-cli@${version}`;
 
     // Process .env files
     const dotEnvFile = core.getInput('dotEnvFile');
@@ -293,29 +299,23 @@ export async function run(): Promise<void> {
     // Determine if we should auto-login
     const shouldAutoLogin = isPersonalAccessToken(accessToken);
 
-    if (shouldAutoLogin) {
-      try {
-        await exec.exec('settlemint', ['login', '-a']);
-      } catch (error) {
-        throw new Error(`Failed to authenticate with SettleMint: ${error}. Please check your access token.`);
-      }
+    if (autoLogin === 'true') {
+      await exec.exec(settlemintCmd, ['login', '-a']);
 
       if (autoConnect === 'true') {
-        try {
-          await exec.exec('settlemint', ['connect', '-a']);
-        } catch (error) {
-          core.warning(`Failed to auto-connect to workspace: ${error}`);
-        }
+        await exec.exec(settlemintCmd, ['connect', '-a']);
       }
     }
 
     if (command) {
-      try {
-        const args = parseCommand(command);
-        await exec.exec('settlemint', args);
-      } catch (error) {
-        throw new Error(`Failed to execute command: ${error}`);
-      }
+      await exec.exec(settlemintCmd, command.split(' '));
+    }
+
+    // Save cache after successful execution
+    try {
+      await cache.saveCache([npmCache], cacheKey);
+    } catch (_error) {
+      core.warning('Cache save failed');
     }
   } catch (error) {
     if (error instanceof Error) {
