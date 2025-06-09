@@ -3,6 +3,7 @@ import * as core from '@actions/core';
 import * as exec from '@actions/exec';
 import * as os from 'node:os';
 import * as path from 'node:path';
+import * as semver from 'semver';
 
 process.env.CI = 'true';
 
@@ -33,6 +34,64 @@ const QUOTE_PATTERN = /^["'](.*)["']$/;
 function sanitizeInput(input: string): string {
   // Remove any shell metacharacters that could be used for injection
   return input.replace(/[;&|`$()<>\\]/g, '');
+}
+
+/**
+ * Validates and parses command arguments safely
+ */
+function parseCommand(command: string): string[] {
+  // Basic validation to prevent obvious injection attempts
+  if (
+    command.includes('&&') ||
+    command.includes('||') ||
+    command.includes(';') ||
+    command.includes('|') ||
+    command.includes('`') ||
+    command.includes('$(') ||
+    command.includes('>') ||
+    command.includes('<')
+  ) {
+    throw new Error('Command contains potentially dangerous characters. Please use simple commands only.');
+  }
+
+  // Split by spaces but respect quoted strings
+  const args: string[] = [];
+  let current = '';
+  let inQuotes = false;
+  let quoteChar = '';
+
+  for (let i = 0; i < command.length; i++) {
+    const char = command[i];
+
+    if ((char === '"' || char === "'") && (i === 0 || command[i - 1] !== '\\')) {
+      if (!inQuotes) {
+        inQuotes = true;
+        quoteChar = char;
+      } else if (char === quoteChar) {
+        inQuotes = false;
+        quoteChar = '';
+      } else {
+        current += char;
+      }
+    } else if (char === ' ' && !inQuotes) {
+      if (current) {
+        args.push(current);
+        current = '';
+      }
+    } else {
+      current += char;
+    }
+  }
+
+  if (current) {
+    args.push(current);
+  }
+
+  if (inQuotes) {
+    throw new Error('Unclosed quote in command');
+  }
+
+  return args;
 }
 
 /**
@@ -68,6 +127,39 @@ function processEnvContent(content: string): void {
       core.exportVariable(sanitizedKey, sanitizedValue);
     }
   }
+}
+
+/**
+ * Validates the version format
+ */
+function validateVersion(version: string): void {
+  if (version === 'latest') {
+    return;
+  }
+
+  if (!semver.valid(version)) {
+    throw new Error(`Invalid version format: ${version}. Must be a valid semver version or 'latest'`);
+  }
+}
+
+/**
+ * Sets up output masking for sensitive values
+ */
+function setupOutputMasking(accessToken: string): void {
+  if (accessToken) {
+    core.setSecret(accessToken);
+  }
+
+  // Mask common sensitive patterns
+  const _sensitivePatterns = [
+    /sm_pat_[a-zA-Z0-9]+/g, // Personal access tokens
+    /sm_app_[a-zA-Z0-9]+/g, // Application tokens
+    /0x[a-fA-F0-9]{40}/g, // Ethereum addresses
+    /0x[a-fA-F0-9]{64}/g, // Private keys
+  ];
+
+  // Note: GitHub Actions automatically masks values set with setSecret
+  // Additional masking would need to be done at the exec level
 }
 
 /**
@@ -160,6 +252,19 @@ export async function run(): Promise<void> {
     const version = core.getInput('version');
     const accessToken = core.getInput('access-token');
     const autoConnect = core.getInput('auto-connect');
+    const instance = core.getInput('instance');
+
+    // Validate version
+    validateVersion(version);
+
+    // Validate inputs for non-standalone mode
+    const isStandalone = instance === 'standalone';
+    if (!isStandalone && !accessToken) {
+      throw new Error('access-token is required when not in standalone mode');
+    }
+
+    // Setup output masking for sensitive values
+    setupOutputMasking(accessToken);
 
     // Setup cache
     const npmCache = path.join(os.homedir(), '.npm');
@@ -182,16 +287,23 @@ export async function run(): Promise<void> {
     setEnvironmentVariables(inputs);
 
     // Execute SettleMint commands
-    if (isPersonalAccessToken(accessToken)) {
+    // Only login if not in standalone mode and have a personal access token
+    if (!isStandalone && isPersonalAccessToken(accessToken)) {
       await exec.exec(settlemintCmd, ['login', '-a']);
     }
 
-    if (autoConnect === 'true') {
+    // Only connect if not in standalone mode and auto-connect is enabled
+    if (!isStandalone && autoConnect === 'true') {
       await exec.exec(settlemintCmd, ['connect', '-a']);
     }
 
     if (command) {
-      await exec.exec(settlemintCmd, command.split(' '));
+      try {
+        const args = parseCommand(command);
+        await exec.exec(settlemintCmd, args);
+      } catch (error) {
+        throw new Error(`Failed to execute command: ${error}`);
+      }
     }
 
     // Save cache after successful execution
