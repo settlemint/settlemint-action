@@ -12,7 +12,14 @@
   "bugs": {
     "url": "https://github.com/settlemint/settlemint-action/issues"
   },
-  "keywords": ["actions", "github-actions", "settlemint", "blockchain", "cli", "automation"],
+  "keywords": [
+    "actions",
+    "github-actions",
+    "settlemint",
+    "blockchain",
+    "cli",
+    "automation"
+  ],
   "exports": {
     ".": "./dist/index.js"
   },
@@ -37,17 +44,32 @@
     "verbose": true,
     "clearMocks": true,
     "testEnvironment": "node",
-    "moduleFileExtensions": ["js", "ts"],
-    "testMatch": ["**/*.test.ts"],
-    "testPathIgnorePatterns": ["/node_modules/", "/dist/"],
+    "moduleFileExtensions": [
+      "js",
+      "ts"
+    ],
+    "testMatch": [
+      "**/*.test.ts"
+    ],
+    "testPathIgnorePatterns": [
+      "/node_modules/",
+      "/dist/"
+    ],
     "transform": {
       "^.+\\.ts$": "ts-jest"
     },
-    "coverageReporters": ["json-summary", "text", "lcov"],
+    "coverageReporters": [
+      "json-summary",
+      "text",
+      "lcov"
+    ],
     "collectCoverage": true,
-    "collectCoverageFrom": ["./src/**"]
+    "collectCoverageFrom": [
+      "./src/**"
+    ]
   },
   "dependencies": {
+    "@actions/cache": "^4.0.3",
     "@actions/core": "^1.11.1",
     "@actions/exec": "^1.1.1",
     "@actions/tool-cache": "^2.0.1",
