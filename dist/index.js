@@ -36123,10 +36123,6 @@ async function run() {
         const version = core.getInput('version');
         const accessToken = core.getInput('access-token');
         const autoConnect = core.getInput('auto-connect');
-        // Validate inputs
-        if (!accessToken) {
-            throw new Error('access-token is required');
-        }
         // Validate version format
         validateVersion(version);
         // Setup output masking for sensitive values

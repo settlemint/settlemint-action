@@ -230,26 +230,6 @@ describe('action', () => {
     );
   });
 
-  it('requires access token', async () => {
-    getInputMock.mockImplementation((name) => {
-      switch (name) {
-        case 'command':
-          return 'status';
-        case 'version':
-          return 'latest';
-        case 'access-token':
-          return '';
-        default:
-          return '';
-      }
-    });
-
-    await main.run();
-    expect(runMock).toHaveReturned();
-
-    expect(setFailedMock).toHaveBeenCalledWith('access-token is required');
-  });
-
   it('handles installation failure with retry', async () => {
     findMock.mockReturnValue('');
 

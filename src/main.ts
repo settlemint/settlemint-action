@@ -250,11 +250,6 @@ export async function run(): Promise<void> {
     const accessToken = core.getInput('access-token');
     const autoConnect = core.getInput('auto-connect');
 
-    // Validate inputs
-    if (!accessToken) {
-      throw new Error('access-token is required');
-    }
-
     // Validate version format
     validateVersion(version);
 
