@@ -1,0 +1,113 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# Security Architecture and Best Practices
+
+## Input Sanitization
+
+### Command Injection Prevention
+The `parseCommand()` function in [src/main.ts](mdc:src/main.ts) implements multiple layers of protection:
+
+```typescript
+// Dangerous characters that are blocked
+const blockedChars = ['&&', '||', ';', '|', '`', '$(', '>', '<'];
+```
+
+- **Shell Metacharacters**: Blocks command chaining, pipes, redirections
+- **Command Substitution**: Prevents `$()` and backtick execution
+- **Quote Handling**: Properly parses quoted strings while preventing injection
+
+### Input Sanitization Function
+The `sanitizeInput()` function removes dangerous characters:
+```typescript
+function sanitizeInput(input: string): string {
+  return input.replace(/[;&|`$()<>\\]/g, '');
+}
+```
+
+Applied to all user inputs before:
+- Setting environment variables
+- Processing .env file content
+- Executing CLI commands
+
+## Secret Management
+
+### Token Masking
+- All access tokens are automatically masked using `core.setSecret()`
+- Personal access tokens (`sm_pat_*`) are detected and handled specially
+- Sensitive patterns are identified and masked in outputs
+
+### Environment Variable Security
+- Tokens are set to appropriate environment variables based on type:
+  - Personal tokens → `SETTLEMINT_PERSONAL_ACCESS_TOKEN`
+  - Application tokens → `SETTLEMINT_ACCESS_TOKEN`
+- All SettleMint-specific variables use `SETTLEMINT_` prefix
+- Input sanitization applied before setting any environment variable
+
+### Sensitive Pattern Detection
+The action identifies and masks common sensitive patterns:
+- Personal access tokens: `/sm_pat_[a-zA-Z0-9]+/g`
+- Application tokens: `/sm_app_[a-zA-Z0-9]+/g`
+- Ethereum addresses: `/0x[a-fA-F0-9]{40}/g`
+- Private keys: `/0x[a-fA-F0-9]{64}/g`
+
+## Environment File Processing
+
+### Secure .env Parsing
+The `processEnvContent()` function safely processes environment files:
+- Validates line format with regex: `/^[A-Za-z_][A-Za-z0-9_]*=/`
+- Strips comments and empty lines
+- Handles quoted values: `/^["'](.*)["']$/`
+- Sanitizes both keys and values before setting
+
+### Error Handling
+- Non-critical errors in .env processing are logged as warnings
+- Malformed lines are skipped rather than causing failures
+- Continues processing even if individual lines fail
+
+## Runtime Security
+
+### Process Environment
+- Sets `process.env.CI = 'true'` to ensure CLI runs in CI mode
+- Validates version format using semver to prevent malicious versions
+- Standalone mode bypasses authentication requirements safely
+
+### Error Information Disclosure
+- Generic error messages prevent information leakage
+- Detailed errors only in debug mode
+- Failed operations don't expose sensitive configuration
+
+## Validation and Verification
+
+### Version Validation
+```typescript
+function validateVersion(version: string): void {
+  if (version === 'latest') return;
+  if (!semver.valid(version)) {
+    throw new Error(`Invalid version format: ${version}`);
+  }
+}
+```
+
+### Input Validation
+- All inputs validated before use
+- Required inputs checked based on mode (standalone vs. authenticated)
+- Command parsing validates structure before execution
+
+## Security Testing
+
+### Test Coverage
+Tests in [__tests__/main.test.ts](mdc:__tests__/main.test.ts) verify:
+- Input sanitization effectiveness
+- Command injection prevention
+- Token masking functionality
+- Environment variable security
+- Error handling without information disclosure
+
+### Security Test Cases
+- Malicious command injection attempts
+- Invalid token formats
+- Malformed environment files
+- Edge cases in input parsing

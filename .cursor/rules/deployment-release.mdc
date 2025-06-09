@@ -1,0 +1,149 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# Deployment and Release Process
+
+## Release Strategy
+
+### Versioning
+- **Semantic Versioning**: Follow semver (MAJOR.MINOR.PATCH)
+- **Current Version**: Defined in [package.json](mdc:package.json)
+- **Git Tags**: Each release creates a corresponding git tag
+- **Branch Strategy**: Releases from `main` branch
+
+### Release Types
+- **Major**: Breaking changes to action inputs/outputs
+- **Minor**: New features, additional inputs, enhanced functionality
+- **Patch**: Bug fixes, security updates, performance improvements
+
+## Build Process
+
+### Pre-Release Checklist
+1. **Code Quality**: All linting and formatting passes
+2. **Tests**: 100% test suite passes with >90% coverage
+3. **Build**: Clean build with `npm run all`
+4. **Documentation**: README and examples updated
+5. **Security**: Security review completed
+
+### Build Pipeline
+```bash
+npm run all  # Complete build pipeline:
+# 1. npm run format    - Format code with Biome
+# 2. npm run lint      - Lint and fix issues
+# 3. npm run test      - Run test suite
+# 4. npm run coverage  - Generate coverage reports
+# 5. npm run package   - Build distribution files
+```
+
+### Distribution Files
+- **Main Entry**: `dist/index.js` - Bundled action entry point
+- **Source Maps**: `dist/index.js.map` - For debugging
+- **Licenses**: `dist/licenses.txt` - All dependency licenses
+- **Commit Requirement**: All dist files must be committed
+
+## GitHub Actions Integration
+
+### Action Metadata
+Defined in [action.yml](mdc:action.yml):
+- **Runtime**: `node20` - Node.js 20 runtime
+- **Entry Point**: `dist/index.js`
+- **Branding**: Terminal icon, blue color
+- **Inputs**: All supported action inputs with descriptions
+
+### Marketplace Publishing
+- **Automatic**: Releases trigger marketplace updates
+- **Visibility**: Public action available to all GitHub users
+- **Categories**: Tagged with relevant marketplace categories
+- **Documentation**: README serves as marketplace documentation
+
+## Dependency Management
+
+### Renovate Configuration
+Configured in [.github/renovate.json](mdc:.github/renovate.json):
+- **Auto-merge**: Minor and patch updates
+- **Post-update**: Runs `npm run package` after dependency updates
+- **Schedule**: Regular dependency updates
+- **Security**: Immediate security updates
+
+### Dependency Strategy
+- **Production Dependencies**: Minimal, security-focused
+- **Development Dependencies**: Latest stable versions
+- **Lock File**: `package-lock.json` committed for reproducible builds
+- **Overrides**: Security overrides for vulnerable dependencies
+
+## Release Automation
+
+### GitHub Workflows
+Located in `.github/workflows/`:
+- **CI/CD**: Automated testing and building
+- **Release**: Automated release process
+- **Security**: Dependency scanning and security checks
+
+### Release Process
+1. **Version Bump**: Update version in package.json
+2. **Changelog**: Update CHANGELOG.md with changes
+3. **Build**: Run complete build pipeline
+4. **Commit**: Commit all changes including dist files
+5. **Tag**: Create git tag with version
+6. **Push**: Push to main branch
+7. **Release**: GitHub automatically creates release
+
+## Quality Gates
+
+### Pre-Release Validation
+- **Linting**: Biome linting passes
+- **Type Checking**: TypeScript compilation succeeds
+- **Testing**: All tests pass with coverage requirements
+- **Security**: No known vulnerabilities
+- **Build**: Clean build without errors
+
+### Post-Release Validation
+- **Marketplace**: Action appears in GitHub Marketplace
+- **Functionality**: Basic smoke tests pass
+- **Documentation**: Examples work as documented
+- **Compatibility**: Works with supported Node.js versions
+
+## Rollback Strategy
+
+### Version Management
+- **Git Tags**: Enable easy rollback to previous versions
+- **Branch Protection**: Prevent direct pushes to main
+- **Release Notes**: Clear documentation of changes
+- **Breaking Changes**: Clearly marked and documented
+
+### Emergency Procedures
+1. **Identify Issue**: Determine scope and impact
+2. **Quick Fix**: If possible, create hotfix
+3. **Rollback**: Revert to previous stable version
+4. **Communication**: Notify users of issues and resolution
+5. **Post-Mortem**: Analyze and prevent future issues
+
+## Documentation Updates
+
+### Release Documentation
+- **README**: Keep examples and usage current
+- **CHANGELOG**: Document all changes
+- **Migration Guides**: For breaking changes
+- **Examples**: Update workflow examples
+
+### User Communication
+- **Release Notes**: Clear, user-focused descriptions
+- **Breaking Changes**: Prominent warnings and migration paths
+- **New Features**: Usage examples and benefits
+- **Bug Fixes**: Impact and resolution details
+
+## Monitoring and Feedback
+
+### Usage Analytics
+- **GitHub Insights**: Monitor action usage
+- **Error Tracking**: Monitor failure rates
+- **Performance**: Track execution times
+- **Feedback**: User issues and feature requests
+
+### Continuous Improvement
+- **User Feedback**: Regular review of issues and discussions
+- **Performance Metrics**: Monitor and optimize execution time
+- **Security Updates**: Regular security reviews and updates
+- **Feature Development**: Based on user needs and feedback

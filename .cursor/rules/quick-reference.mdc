@@ -1,0 +1,158 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# Quick Reference Guide
+
+## Essential Commands
+
+### Development Workflow
+```bash
+# Complete development cycle
+npm run all                    # Format, lint, test, coverage, package
+
+# Individual steps
+npm run format                 # Format code with Biome
+npm run lint                   # Lint and auto-fix issues
+npm test                       # Run test suite
+npm run coverage               # Generate coverage reports
+npm run package                # Build distribution files
+
+# Development helpers
+npm run package:watch          # Build in watch mode
+npm run local-action           # Test action locally
+```
+
+### Testing Commands
+```bash
+npm test                       # Run all tests
+npm run ci-test               # CI-specific test run
+npm run coverage              # Generate coverage + badge
+```
+
+## Key Files and Locations
+
+### Core Implementation
+- **[src/main.ts](mdc:src/main.ts)** - Main action logic (319 lines)
+- **[src/index.ts](mdc:src/index.ts)** - Entry point (8 lines)
+- **[action.yml](mdc:action.yml)** - GitHub Action configuration
+
+### Configuration Files
+- **[package.json](mdc:package.json)** - Dependencies and scripts
+- **[tsconfig.json](mdc:tsconfig.json)** - TypeScript configuration
+- **[biome.json](mdc:biome.json)** - Linting and formatting rules
+
+### Testing
+- **[__tests__/main.test.ts](mdc:__tests__/main.test.ts)** - Main test suite (283 lines)
+- **[__tests__/index.test.ts](mdc:__tests__/index.test.ts)** - Entry point tests
+
+### Build Output
+- **`dist/index.js`** - Bundled action (generated)
+- **`dist/index.js.map`** - Source maps (generated)
+- **`dist/licenses.txt`** - Dependency licenses (generated)
+
+## Common Development Tasks
+
+### Adding New Input
+1. Add input definition to [action.yml](mdc:action.yml)
+2. Add to `ENV_VARS` array in [src/main.ts](mdc:src/main.ts)
+3. Update input processing logic
+4. Add tests in [__tests__/main.test.ts](mdc:__tests__/main.test.ts)
+5. Update documentation
+
+### Security Updates
+1. Review input sanitization in `sanitizeInput()`
+2. Update sensitive pattern detection
+3. Add security tests
+4. Update token masking logic
+5. Review command injection prevention
+
+### Performance Optimization
+1. Review caching logic in `handleCache()`
+2. Optimize environment variable processing
+3. Update cache key generation
+4. Test cache hit/miss scenarios
+5. Monitor execution time
+
+### Adding New Feature
+1. Implement in [src/main.ts](mdc:src/main.ts)
+2. Add comprehensive tests
+3. Update [action.yml](mdc:action.yml) if needed
+4. Update documentation and examples
+5. Run full build pipeline
+
+## Environment Variables
+
+### SettleMint Variables (Auto-set)
+```bash
+SETTLEMINT_ACCESS_TOKEN              # Application tokens
+SETTLEMINT_PERSONAL_ACCESS_TOKEN     # Personal tokens (sm_pat_*)
+SETTLEMINT_INSTANCE                  # Instance URL
+SETTLEMINT_WORKSPACE                 # Workspace name
+SETTLEMINT_APPLICATION               # Application name
+# ... and 10+ more resource identifiers
+```
+
+### System Variables
+```bash
+CI=true                              # Set automatically
+NODE_ENV                             # Inherited from runner
+```
+
+## Debugging
+
+### Local Testing
+```bash
+# Test action locally
+npm run local-action
+
+# Debug with environment
+DEBUG=* npm run local-action
+
+# Test specific scenarios
+npm test -- --testNamePattern="specific test"
+```
+
+### Common Issues
+- **Build failures**: Check TypeScript errors, run `npm run lint`
+- **Test failures**: Check mocks, verify test isolation
+- **Cache issues**: Clear npm cache, check cache key generation
+- **Security errors**: Review input sanitization, check token masking
+
+## Release Checklist
+
+### Pre-Release
+- [ ] All tests pass (`npm test`)
+- [ ] Coverage >90% (`npm run coverage`)
+- [ ] Linting passes (`npm run lint`)
+- [ ] Build succeeds (`npm run package`)
+- [ ] Documentation updated
+- [ ] Version bumped in [package.json](mdc:package.json)
+
+### Release Process
+1. Update version in [package.json](mdc:package.json)
+2. Run `npm run all` to build everything
+3. Commit all changes including `dist/` files
+4. Create and push git tag
+5. GitHub automatically creates release
+
+## Architecture Overview
+
+### Execution Flow
+1. **Input Collection** → Gather and validate all inputs
+2. **Security Setup** → Sanitize inputs, mask secrets
+3. **Cache Restore** → Attempt to restore npm cache
+4. **CLI Installation** → Install SettleMint CLI via npx
+5. **Authentication** → Login if personal token provided
+6. **Auto-connect** → Connect to SettleMint if enabled
+7. **Command Execution** → Run user-specified commands
+8. **Cache Save** → Save npm cache for future runs
+
+### Key Functions
+- `run()` - Main entry point
+- `sanitizeInput()` - Security sanitization
+- `parseCommand()` - Safe command parsing
+- `processEnvContent()` - .env file processing
+- `handleCache()` - Cache operations
+- `setupOutputMasking()` - Security masking

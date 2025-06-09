@@ -1,0 +1,86 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# GitHub Action Inputs and Configuration
+
+## Action Metadata
+The action configuration is defined in [action.yml](mdc:action.yml) with the following key properties:
+- **Name**: 'SettleMint CLI Action'
+- **Runtime**: Node.js 20
+- **Main Entry**: `dist/index.js`
+- **Branding**: Terminal icon with blue color
+
+## Required Inputs
+
+### `access-token`
+- **Description**: SettleMint Access Token (personal or application)
+- **Required**: Only when not in standalone mode
+- **Security**: Automatically masked in outputs
+- **Types**:
+  - Personal tokens: Start with `sm_pat_` → Sets `SETTLEMINT_PERSONAL_ACCESS_TOKEN`
+  - Application tokens: Other formats → Sets `SETTLEMINT_ACCESS_TOKEN`
+
+## Optional Inputs
+
+### Core Configuration
+- **`command`**: SettleMint CLI command to execute
+- **`version`**: CLI version to install (default: 'latest')
+- **`auto-connect`**: Automatically connect to SettleMint (default: 'true')
+- **`instance`**: SettleMint instance URL (default: 'https://console.settlemint.com')
+
+### SettleMint Resource Identifiers
+All of these inputs are converted to environment variables with `SETTLEMINT_` prefix:
+- **`workspace`** → `SETTLEMINT_WORKSPACE`
+- **`application`** → `SETTLEMINT_APPLICATION`
+- **`blockchain-network`** → `SETTLEMINT_BLOCKCHAIN_NETWORK`
+- **`blockchain-node`** → `SETTLEMINT_BLOCKCHAIN_NODE`
+- **`load-balancer`** → `SETTLEMINT_LOAD_BALANCER`
+- **`hasura`** → `SETTLEMINT_HASURA`
+- **`thegraph`** → `SETTLEMINT_THEGRAPH`
+- **`portal`** → `SETTLEMINT_PORTAL`
+- **`hd-private-key`** → `SETTLEMINT_HD_PRIVATE_KEY`
+- **`minio`** → `SETTLEMINT_MINIO`
+- **`ipfs`** → `SETTLEMINT_IPFS`
+- **`custom-deployment`** → `SETTLEMINT_CUSTOM_DEPLOYMENT`
+- **`blockscout`** → `SETTLEMINT_BLOCKSCOUT`
+
+### Environment File Processing
+- **`dotEnvFile`**: GitHub Actions secret containing .env file content
+- **`dotEnvLocalFile`**: GitHub Actions secret containing .env.local file content
+
+Both are processed by the `processEnvContent()` function in [src/main.ts](mdc:src/main.ts) which:
+- Parses key=value pairs
+- Removes comments and empty lines
+- Handles quoted values
+- Sanitizes input before setting environment variables
+
+## Usage Patterns
+
+### Basic Usage
+```yaml
+- uses: settlemint/settlemint-action@v1
+  with:
+    access-token: ${{ secrets.SETTLEMINT_TOKEN }}
+    command: 'deploy --help'
+```
+
+### With Environment Variables
+```yaml
+- uses: settlemint/settlemint-action@v1
+  with:
+    access-token: ${{ secrets.SETTLEMINT_TOKEN }}
+    workspace: 'my-workspace'
+    application: 'my-app'
+    command: 'deploy'
+```
+
+### With Environment Files
+```yaml
+- uses: settlemint/settlemint-action@v1
+  with:
+    access-token: ${{ secrets.SETTLEMINT_TOKEN }}
+    dotEnvFile: ${{ secrets.DOT_ENV }}
+    command: 'deploy'
+```

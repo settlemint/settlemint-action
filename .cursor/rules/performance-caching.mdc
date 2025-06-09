@@ -1,0 +1,115 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# Performance Optimization and Caching Strategy
+
+## NPM Package Caching
+
+### Cache Implementation
+The action implements intelligent npm caching using GitHub Actions cache API:
+
+```typescript
+// Cache key generation
+const cacheKey = `settlemint-cli-${version}-${os.platform()}-${os.arch()}`;
+const npmCache = path.join(os.homedir(), '.npm');
+```
+
+### Cache Strategy
+- **Cache Key**: Includes CLI version, OS platform, and architecture for precise matching
+- **Cache Path**: Uses npm's default cache directory (`~/.npm`)
+- **Cache Operations**: Handled by `handleCache()` function in [src/main.ts](mdc:src/main.ts)
+
+### Cache Lifecycle
+1. **Restore Phase**: Attempts to restore cache before CLI installation
+2. **Execution Phase**: Downloads packages if cache miss occurs
+3. **Save Phase**: Saves cache after successful execution for future runs
+
+### Error Handling
+- Cache failures are non-blocking (logged as warnings)
+- Action continues with fresh downloads if cache operations fail
+- Separate error handling for restore vs. save operations
+
+## CLI Execution Optimization
+
+### NPX Usage
+Uses `npx -y @settlemint/sdk-cli@${version}` for optimal performance:
+- **`-y` flag**: Automatically accepts package installation prompts
+- **Version pinning**: Ensures consistent CLI version across runs
+- **No global installation**: Avoids polluting the runner environment
+
+### Command Execution Flow
+1. **Version validation**: Prevents unnecessary downloads of invalid versions
+2. **Cache restoration**: Attempts to use cached packages first
+3. **CLI installation**: Downloads only if not cached
+4. **Authentication**: Only if required (personal tokens + non-standalone mode)
+5. **Auto-connect**: Only if enabled and not in standalone mode
+6. **Command execution**: Runs user-specified commands
+7. **Cache saving**: Stores packages for future runs
+
+## Memory and Resource Management
+
+### Environment Variable Optimization
+- Lazy loading of environment variables
+- Input collection using Map for efficient lookups
+- Sanitization applied only to non-empty values
+
+### Process Management
+- Sets `process.env.CI = 'true'` for CLI optimization
+- Minimal environment variable footprint
+- Efficient string processing for .env files
+
+## Build Optimization
+
+### TypeScript Compilation
+Configuration in [tsconfig.json](mdc:tsconfig.json):
+- **Target**: ES2022 for modern JavaScript features
+- **Module**: Node16 for optimal Node.js compatibility
+- **Strict mode**: Enabled for better optimization opportunities
+
+### Bundle Optimization
+Using `@vercel/ncc` for optimal bundling:
+- **Single file output**: Reduces I/O operations
+- **Tree shaking**: Eliminates unused code
+- **Source maps**: Included for debugging without performance impact
+- **License bundling**: Consolidates all licenses in one file
+
+### Package Scripts
+Optimized build pipeline in [package.json](mdc:package.json):
+```json
+{
+  "bundle": "npm run format && npm run package",
+  "package": "npx ncc build src/index.ts -o dist --source-map --license licenses.txt",
+  "all": "npm run format && npm run lint && npm run test && npm run coverage && npm run package"
+}
+```
+
+## Performance Monitoring
+
+### Execution Time Tracking
+- Cache hit/miss logging for performance analysis
+- Debug output for timing-sensitive operations
+- Error categorization for performance impact assessment
+
+### Resource Usage
+- Minimal dependency footprint
+- Efficient regex patterns for input validation
+- Optimized string operations for large .env files
+
+## Best Practices for Users
+
+### Cache Optimization
+- Use consistent CLI versions across workflows for better cache hits
+- Consider cache warming in separate jobs for large projects
+- Monitor cache usage in GitHub Actions insights
+
+### Command Optimization
+- Batch multiple CLI commands when possible
+- Use specific CLI versions rather than 'latest' for better caching
+- Minimize environment variable usage when not needed
+
+### Workflow Optimization
+- Place SettleMint CLI steps after other setup steps
+- Use matrix builds efficiently with caching
+- Consider parallel execution for independent CLI operations

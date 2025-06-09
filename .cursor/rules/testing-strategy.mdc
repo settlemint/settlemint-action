@@ -1,0 +1,168 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# Testing Strategy and Patterns
+
+## Test Framework Configuration
+
+### Jest Setup
+Configuration in [package.json](mdc:package.json):
+```json
+{
+  "jest": {
+    "preset": "ts-jest",
+    "testEnvironment": "node",
+    "coverageReporters": ["json-summary", "text", "lcov"],
+    "collectCoverage": true,
+    "collectCoverageFrom": ["./src/**"]
+  }
+}
+```
+
+### Test Structure
+- **Main Tests**: [__tests__/main.test.ts](mdc:__tests__/main.test.ts) - Core functionality testing
+- **Index Tests**: [__tests__/index.test.ts](mdc:__tests__/index.test.ts) - Entry point testing
+- **Coverage Target**: >90% code coverage
+- **Test Environment**: Node.js environment for GitHub Actions compatibility
+
+## Testing Patterns
+
+### Mock Strategy
+All external dependencies are mocked to ensure isolated testing:
+
+```typescript
+// Core GitHub Actions modules
+jest.mock('@actions/core');
+jest.mock('@actions/exec');
+jest.mock('@actions/cache');
+
+// Node.js modules
+jest.mock('node:os');
+jest.mock('node:path');
+```
+
+### Test Categories
+
+#### 1. Input Validation Tests
+- **Command parsing**: Valid and invalid command formats
+- **Version validation**: Semver compliance and edge cases
+- **Input sanitization**: Security-focused validation
+- **Environment variable processing**: .env file parsing
+
+#### 2. Security Tests
+- **Command injection prevention**: Malicious input handling
+- **Token masking**: Sensitive data protection
+- **Input sanitization**: XSS and injection prevention
+- **Environment variable security**: Safe variable setting
+
+#### 3. Functionality Tests
+- **CLI execution flow**: Complete workflow testing
+- **Authentication modes**: Personal vs application tokens
+- **Auto-connect behavior**: Connection logic validation
+- **Cache operations**: Cache hit/miss scenarios
+
+#### 4. Error Handling Tests
+- **Graceful failures**: Non-blocking error scenarios
+- **Error messaging**: User-friendly error output
+- **Recovery mechanisms**: Fallback behavior testing
+- **Edge cases**: Boundary condition handling
+
+## Test Data Management
+
+### Mock Data Patterns
+```typescript
+// Input mocking
+const mockGetInput = jest.mocked(core.getInput);
+mockGetInput.mockImplementation((name: string) => {
+  const inputs: Record<string, string> = {
+    'command': 'deploy --help',
+    'version': '1.0.0',
+    'access-token': 'sm_pat_test123'
+  };
+  return inputs[name] || '';
+});
+```
+
+### Environment Simulation
+- **OS platform mocking**: Cross-platform testing
+- **Cache directory simulation**: File system abstraction
+- **Environment variable isolation**: Clean test environment
+
+## Coverage Requirements
+
+### Coverage Metrics
+- **Statements**: >90% coverage required
+- **Branches**: All conditional paths tested
+- **Functions**: All exported functions covered
+- **Lines**: Critical code paths validated
+
+### Coverage Reporting
+- **JSON Summary**: For automated checks
+- **LCOV**: For detailed analysis
+- **Text**: For developer feedback
+- **Badge Generation**: Visual coverage indicator
+
+## Test Execution
+
+### Local Testing
+```bash
+npm test              # Run all tests
+npm run ci-test       # CI-specific test run
+npm run coverage      # Generate coverage reports
+```
+
+### CI/CD Integration
+- **Automated testing**: On every pull request
+- **Coverage validation**: Fails if coverage drops
+- **Cross-platform testing**: Multiple OS environments
+- **Dependency testing**: Various Node.js versions
+
+## Test Maintenance
+
+### Test Organization
+- **Describe blocks**: Logical grouping of related tests
+- **Setup/teardown**: Proper mock cleanup
+- **Test isolation**: Independent test execution
+- **Descriptive names**: Clear test intentions
+
+### Mock Maintenance
+- **Mock updates**: Keep mocks in sync with dependencies
+- **Mock validation**: Ensure mocks match real behavior
+- **Mock cleanup**: Proper reset between tests
+- **Mock documentation**: Clear mock purpose and behavior
+
+## Quality Assurance
+
+### Test Quality Metrics
+- **Test readability**: Clear, maintainable test code
+- **Test reliability**: Consistent test results
+- **Test performance**: Fast execution times
+- **Test coverage**: Comprehensive scenario coverage
+
+### Continuous Improvement
+- **Regular review**: Test effectiveness assessment
+- **Refactoring**: Test code maintenance
+- **New scenarios**: Expanding test coverage
+- **Performance optimization**: Test execution speed
+
+## Best Practices
+
+### Writing Tests
+1. **Arrange-Act-Assert**: Clear test structure
+2. **Single responsibility**: One concept per test
+3. **Descriptive names**: Self-documenting tests
+4. **Mock isolation**: Minimal external dependencies
+
+### Test Data
+1. **Realistic data**: Representative test inputs
+2. **Edge cases**: Boundary condition testing
+3. **Error scenarios**: Failure mode validation
+4. **Security cases**: Malicious input testing
+
+### Maintenance
+1. **Regular updates**: Keep tests current
+2. **Refactor with code**: Maintain test-code alignment
+3. **Performance monitoring**: Track test execution time
+4. **Coverage monitoring**: Maintain high coverage levels

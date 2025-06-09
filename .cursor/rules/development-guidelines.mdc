@@ -1,0 +1,66 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# Development Guidelines
+
+## Code Standards
+
+### TypeScript Configuration
+- Use strict TypeScript settings as defined in [tsconfig.json](mdc:tsconfig.json)
+- Enable all strict type checking options
+- Target ES2022 for modern JavaScript features
+- Use Node.js module resolution
+
+### Code Formatting and Linting
+- Use Biome for both formatting and linting (configured in [biome.json](mdc:biome.json))
+- Run `npm run format` to format code
+- Run `npm run lint` to lint and auto-fix issues
+- All code must pass linting before commits
+
+### Security Best Practices
+- Always sanitize user inputs using the `sanitizeInput()` function in [src/main.ts](mdc:src/main.ts)
+- Validate command arguments to prevent injection attacks
+- Use `core.setSecret()` for sensitive values like tokens
+- Mask sensitive patterns in outputs
+
+## Testing Requirements
+
+### Test Structure
+- Tests are located in [__tests__/](mdc:__tests__)
+- Use Jest as the testing framework
+- Maintain comprehensive test coverage (aim for >90%)
+- Test files should mirror the source structure
+
+### Test Commands
+- `npm test` - Run all tests
+- `npm run ci-test` - Run tests in CI mode
+- `npm run coverage` - Generate coverage reports and badges
+
+### Test Guidelines
+- Mock external dependencies (@actions/core, @actions/exec, etc.)
+- Test both success and error scenarios
+- Validate input sanitization and security measures
+- Test environment variable processing
+
+## Build Process
+
+### Development Workflow
+1. Make changes to TypeScript files in `src/`
+2. Run `npm run format` and `npm run lint`
+3. Run `npm test` to ensure tests pass
+4. Run `npm run package` to build distribution files
+5. Commit both source and built files
+
+### Build Commands
+- `npm run package` - Build distribution files using ncc
+- `npm run package:watch` - Build in watch mode for development
+- `npm run bundle` - Format and package in one command
+- `npm run all` - Complete build pipeline (format, lint, test, coverage, package)
+
+### Distribution
+- Built files go in `dist/` directory
+- Main entry point is `dist/index.js`
+- Source maps and licenses are included
+- Always commit built files for GitHub Actions to work
