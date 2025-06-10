@@ -37,57 +37,74 @@ function sanitizeInput(input: string): string {
 }
 
 /**
+ * Checks if command contains dangerous characters
+ */
+function containsDangerousCharacters(command: string): boolean {
+  const dangerousPatterns = ['&&', '||', ';', '|', '`', '$(', '>', '<'];
+  return dangerousPatterns.some((pattern) => command.includes(pattern));
+}
+
+/**
+ * Processes a character during command parsing
+ */
+function processCharacter(
+  char: string,
+  index: number,
+  command: string,
+  state: { inQuotes: boolean; quoteChar: string; current: string }
+): void {
+  const isQuote = char === '"' || char === "'";
+  const isEscaped = index > 0 && command[index - 1] === '\\';
+
+  if (isQuote && !isEscaped) {
+    if (!state.inQuotes) {
+      state.inQuotes = true;
+      state.quoteChar = char;
+    } else if (char === state.quoteChar) {
+      state.inQuotes = false;
+      state.quoteChar = '';
+    } else {
+      state.current += char;
+    }
+  } else if (char === ' ' && !state.inQuotes) {
+    // Space handling is done in the main function
+    return;
+  } else {
+    state.current += char;
+  }
+}
+
+/**
  * Validates and parses command arguments safely
  */
 function parseCommand(command: string): string[] {
   // Basic validation to prevent obvious injection attempts
-  if (
-    command.includes('&&') ||
-    command.includes('||') ||
-    command.includes(';') ||
-    command.includes('|') ||
-    command.includes('`') ||
-    command.includes('$(') ||
-    command.includes('>') ||
-    command.includes('<')
-  ) {
+  if (containsDangerousCharacters(command)) {
     throw new Error('Command contains potentially dangerous characters. Please use simple commands only.');
   }
 
   // Split by spaces but respect quoted strings
   const args: string[] = [];
-  let current = '';
-  let inQuotes = false;
-  let quoteChar = '';
+  const state = { current: '', inQuotes: false, quoteChar: '' };
 
   for (let i = 0; i < command.length; i++) {
     const char = command[i];
 
-    if ((char === '"' || char === "'") && (i === 0 || command[i - 1] !== '\\')) {
-      if (!inQuotes) {
-        inQuotes = true;
-        quoteChar = char;
-      } else if (char === quoteChar) {
-        inQuotes = false;
-        quoteChar = '';
-      } else {
-        current += char;
-      }
-    } else if (char === ' ' && !inQuotes) {
-      if (current) {
-        args.push(current);
-        current = '';
+    if (char === ' ' && !state.inQuotes) {
+      if (state.current) {
+        args.push(state.current);
+        state.current = '';
       }
     } else {
-      current += char;
+      processCharacter(char, i, command, state);
     }
   }
 
-  if (current) {
-    args.push(current);
+  if (state.current) {
+    args.push(state.current);
   }
 
-  if (inQuotes) {
+  if (state.inQuotes) {
     throw new Error('Unclosed quote in command');
   }
 
@@ -259,8 +276,9 @@ export async function run(): Promise<void> {
 
     // Validate inputs for non-standalone mode
     const isStandalone = instance === 'standalone';
-    if (!isStandalone && !accessToken) {
-      throw new Error('access-token is required when not in standalone mode');
+    const isLocal = instance === 'local';
+    if (!isStandalone && !accessToken && !isLocal) {
+      throw new Error('access-token is required when not in standalone or local mode');
     }
 
     // Setup output masking for sensitive values

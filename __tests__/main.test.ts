@@ -253,7 +253,7 @@ describe('action', () => {
     });
 
     await main.run();
-    expect(_setFailedMock).toHaveBeenCalledWith('access-token is required when not in standalone mode');
+    expect(_setFailedMock).toHaveBeenCalledWith('access-token is required when not in standalone or local mode');
   }, 30000);
 
   it('processes dotEnvFile content', async () => {
