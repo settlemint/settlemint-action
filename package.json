@@ -12,7 +12,14 @@
   "bugs": {
     "url": "https://github.com/settlemint/settlemint-action/issues"
   },
-  "keywords": ["actions", "github-actions", "settlemint", "blockchain", "cli", "automation"],
+  "keywords": [
+    "actions",
+    "github-actions",
+    "settlemint",
+    "blockchain",
+    "cli",
+    "automation"
+  ],
   "exports": {
     ".": "./dist/index.js"
   },
@@ -37,15 +44,29 @@
     "verbose": true,
     "clearMocks": true,
     "testEnvironment": "node",
-    "moduleFileExtensions": ["js", "ts"],
-    "testMatch": ["**/*.test.ts"],
-    "testPathIgnorePatterns": ["/node_modules/", "/dist/"],
+    "moduleFileExtensions": [
+      "js",
+      "ts"
+    ],
+    "testMatch": [
+      "**/*.test.ts"
+    ],
+    "testPathIgnorePatterns": [
+      "/node_modules/",
+      "/dist/"
+    ],
     "transform": {
       "^.+\\.ts$": "ts-jest"
     },
-    "coverageReporters": ["json-summary", "text", "lcov"],
+    "coverageReporters": [
+      "json-summary",
+      "text",
+      "lcov"
+    ],
     "collectCoverage": true,
-    "collectCoverageFrom": ["./src/**"]
+    "collectCoverageFrom": [
+      "./src/**"
+    ]
   },
   "dependencies": {
     "@actions/cache": "^4.0.3",
@@ -70,6 +91,7 @@
     "ultracite": "^4.2.8"
   },
   "overrides": {
-    "undici@<=6.21.2": "6.21.2"
+    "undici@<=6.21.2": "6.21.2",
+    "brace-expansion@<=1.1.12": "1.1.12"
   }
 }
