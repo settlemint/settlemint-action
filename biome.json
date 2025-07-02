@@ -1,5 +1,6 @@
 {
   "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
+  "extends": ["ultracite"],
   "assist": {
     "actions": {
       "source": {
@@ -13,26 +14,11 @@
   "linter": {
     "enabled": true,
     "rules": {
-      "recommended": true,
-      "complexity": {
-        "noForEach": "warn"
-      },
-      "correctness": {
-        "useExhaustiveDependencies": "warn",
-        "noUnusedImports": "error"
-      },
       "style": {
-        "noNonNullAssertion": "off",
-        "noParameterAssign": "error",
-        "useAsConstAssertion": "error",
-        "useDefaultParameterLast": "error",
-        "useEnumInitializers": "error",
-        "useSelfClosingElements": "error",
-        "useSingleVarDeclarator": "error",
-        "noUnusedTemplateLiteral": "error",
-        "useNumberNamespace": "error",
-        "noInferrableTypes": "error",
-        "noUselessElse": "error"
+        "noNonNullAssertion": "off"
+      },
+      "performance": {
+        "noNamespaceImport": "off"
       }
     }
   },
@@ -44,6 +30,9 @@
     "indentWidth": 2,
     "lineEnding": "lf",
     "lineWidth": 120
+  },
+  "javascript": {
+    "globals": ["jest", "describe", "it", "beforeEach", "afterEach", "expect"]
   },
   "vcs": {
     "enabled": true,
