@@ -76,7 +76,7 @@
     "semver": "^7.7.2"
   },
   "devDependencies": {
-    "@biomejs/biome": "^1.9.4",
+    "@biomejs/biome": "^2.0.0",
     "@github/local-action": "^3.2.1",
     "@jest/globals": "^30.0.0",
     "@settlemint/sdk-cli": "^2.3.6",
