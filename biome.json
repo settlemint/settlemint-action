@@ -1,33 +1,42 @@
 {
+  "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
   "extends": ["ultracite"],
-  "files": {
-    "ignore": [".vscode/", "dist/"]
-  },
-  "linter": {
-    "rules": {
-      "style": {
-        "noNonNullAssertion": "off",
-        "useNamingConvention": "off"
-      },
-      "nursery": {
-        "noSecrets": "off"
+  "assist": {
+    "actions": {
+      "source": {
+        "organizeImports": "on"
       }
     }
   },
+  "files": {
+    "includes": ["**", "!.vscode", "!dist"]
+  },
+  "linter": {
+    "enabled": true,
+    "rules": {
+      "style": {
+        "noNonNullAssertion": "off"
+      },
+      "performance": {
+        "noNamespaceImport": "off"
+      }
+    }
+  },
+  "formatter": {
+    "enabled": true,
+    "formatWithErrors": false,
+    "attributePosition": "auto",
+    "indentStyle": "space",
+    "indentWidth": 2,
+    "lineEnding": "lf",
+    "lineWidth": 120
+  },
   "javascript": {
-    "formatter": {
-      "lineWidth": 120
-    },
     "globals": ["jest", "describe", "it", "beforeEach", "afterEach", "expect"]
   },
-  "css": {
-    "formatter": {
-      "lineWidth": 120
-    }
-  },
-  "json": {
-    "formatter": {
-      "lineWidth": 120
-    }
+  "vcs": {
+    "enabled": true,
+    "clientKind": "git",
+    "useIgnoreFile": true
   }
 }

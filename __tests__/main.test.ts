@@ -87,7 +87,7 @@ describe('action', () => {
     expect(execMock).toHaveBeenCalledWith('npx -y @settlemint/sdk-cli@latest', ['status']);
 
     expect(errorMock).not.toHaveBeenCalled();
-  }, 30000);
+  }, 30_000);
 
   it('handles auto-connect when using a personal access token', async () => {
     getInputMock.mockImplementation((name) => {
@@ -117,7 +117,7 @@ describe('action', () => {
     expect(execMock).toHaveBeenCalledWith('npx -y @settlemint/sdk-cli@latest', ['login', '-a']);
     expect(execMock).toHaveBeenCalledWith('npx -y @settlemint/sdk-cli@latest', ['connect', '-a']);
     expect(execMock).toHaveBeenCalledWith('npx -y @settlemint/sdk-cli@latest', ['status']);
-  }, 30000);
+  }, 30_000);
 
   it('does not login but still connects when using an application access token with auto-connect', async () => {
     getInputMock.mockImplementation((name) => {
@@ -147,7 +147,7 @@ describe('action', () => {
     expect(execMock).not.toHaveBeenCalledWith('npx -y @settlemint/sdk-cli@latest', ['login', '-a']);
     expect(execMock).toHaveBeenCalledWith('npx -y @settlemint/sdk-cli@latest', ['connect', '-a']);
     expect(execMock).toHaveBeenCalledWith('npx -y @settlemint/sdk-cli@latest', ['status']);
-  }, 30000);
+  }, 30_000);
 
   it('sets environment variables when provided', async () => {
     getInputMock.mockImplementation((name) => {
@@ -172,7 +172,7 @@ describe('action', () => {
     expect(process.env.SETTLEMINT_INSTANCE).toBe('test-instance');
     expect(process.env.SETTLEMINT_WORKSPACE).toBe('test-workspace');
     expect(process.env.SETTLEMINT_ACCESS_TOKEN).toBe('sm_app_1234567890');
-  }, 30000);
+  }, 30_000);
 
   it('validates version format', async () => {
     getInputMock.mockImplementation((name) => {
@@ -190,7 +190,7 @@ describe('action', () => {
     expect(_setFailedMock).toHaveBeenCalledWith(
       "Invalid version format: invalid-version. Must be a valid semver version or 'latest'"
     );
-  }, 30000);
+  }, 30_000);
 
   it('handles command injection attempts', async () => {
     getInputMock.mockImplementation((name) => {
@@ -210,7 +210,7 @@ describe('action', () => {
     expect(_setFailedMock).toHaveBeenCalledWith(
       'Failed to execute command: Error: Command contains potentially dangerous characters. Please use simple commands only.'
     );
-  }, 30000);
+  }, 30_000);
 
   it('supports standalone mode without access token', async () => {
     getInputMock.mockImplementation((name) => {
@@ -234,7 +234,7 @@ describe('action', () => {
     expect(execMock).not.toHaveBeenCalledWith('npx -y @settlemint/sdk-cli@latest', ['login', '-a']);
     expect(execMock).not.toHaveBeenCalledWith('npx -y @settlemint/sdk-cli@latest', ['connect', '-a']);
     expect(execMock).toHaveBeenCalledWith('npx -y @settlemint/sdk-cli@latest', ['status']);
-  }, 30000);
+  }, 30_000);
 
   it('requires access token when not in standalone mode', async () => {
     getInputMock.mockImplementation((name) => {
@@ -254,7 +254,7 @@ describe('action', () => {
 
     await main.run();
     expect(_setFailedMock).toHaveBeenCalledWith('access-token is required when not in standalone or local mode');
-  }, 30000);
+  }, 30_000);
 
   it('processes dotEnvFile content', async () => {
     getInputMock.mockImplementation((name) => {
@@ -278,5 +278,5 @@ describe('action', () => {
     expect(exportVariableMock).toHaveBeenCalledWith('TEST_VAR', 'test_value');
     expect(exportVariableMock).toHaveBeenCalledWith('QUOTED', 'quoted value');
     expect(exportVariableMock).toHaveBeenCalledWith('VAR_WITH_EQUALS', 'key=value');
-  }, 30000);
+  }, 30_000);
 });

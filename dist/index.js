@@ -40071,7 +40071,7 @@ function save(namespaces) {
 function load() {
 	let r;
 	try {
-		r = exports.storage.getItem('debug');
+		r = exports.storage.getItem('debug') || exports.storage.getItem('DEBUG') ;
 	} catch (error) {
 		// Swallow
 		// XXX (@Qix-) should we be logging these?
@@ -40299,7 +40299,7 @@ function setup(env) {
 
 		const split = (typeof namespaces === 'string' ? namespaces : '')
 			.trim()
-			.replace(' ', ',')
+			.replace(/\s+/g, ',')
 			.split(',')
 			.filter(Boolean);
 
@@ -75644,7 +75644,7 @@ async function run() {
         // Validate inputs for non-standalone mode
         const isStandalone = instance === 'standalone';
         const isLocal = instance === 'local';
-        if (!isStandalone && !accessToken && !isLocal) {
+        if (!(isStandalone || accessToken || isLocal)) {
             throw new Error('access-token is required when not in standalone or local mode');
         }
         // Setup output masking for sensitive values

@@ -277,7 +277,7 @@ export async function run(): Promise<void> {
     // Validate inputs for non-standalone mode
     const isStandalone = instance === 'standalone';
     const isLocal = instance === 'local';
-    if (!isStandalone && !accessToken && !isLocal) {
+    if (!(isStandalone || accessToken || isLocal)) {
       throw new Error('access-token is required when not in standalone or local mode');
     }
 
