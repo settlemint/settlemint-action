@@ -9,7 +9,7 @@
     }
   },
   "files": {
-    "includes": ["**", "!**/.vscode/launch.json", "!dist"]
+    "includes": ["**", "!.vscode", "!dist"]
   },
   "linter": {
     "enabled": true,
