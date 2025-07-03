@@ -1,75 +1,73 @@
-name: 'SettleMint CLI Action'
-description: 'Execute SettleMint CLI commands in your GitHub Actions workflow'
-author: 'SettleMint'
+name: "SettleMint CLI Action"
+description: "Execute SettleMint CLI commands in your GitHub Actions workflow"
+author: "SettleMint"
 
 branding:
-  icon: 'terminal'
-  color: 'blue'
+  icon: "terminal"
+  color: "blue"
 
 inputs:
   command:
-    description: 'The SettleMint CLI command to execute'
+    description: "The SettleMint CLI command to execute"
     required: false
   access-token:
-    description: 'SettleMint Access Token (can be a personal or an application access token)'
+    description: "SettleMint Access Token (can be a personal or an application access token)"
     required: false
   auto-connect:
-    description: 'Automatically connect to SettleMint'
+    description: "Automatically connect to SettleMint"
     required: false
-    default: 'true'
   version:
-    description: 'SettleMint CLI version to install (defaults to latest)'
+    description: "SettleMint CLI version to install (defaults to latest)"
     required: false
-    default: 'latest'
+    default: "latest"
   instance:
-    description:
-      'SettleMint instance URL (defaults to https://console.settlemint.com)'
+    description: "SettleMint instance URL (defaults to https://console.settlemint.com)"
     required: false
-    default: 'https://console.settlemint.com'
+    default: "https://console.settlemint.com"
   workspace:
-    description: 'SettleMint workspace unique name'
+    description: "SettleMint workspace unique name"
     required: false
   application:
-    description: 'SettleMint application unique name'
+    description: "SettleMint application unique name"
     required: false
   blockchain-network:
-    description: 'SettleMint blockchain network unique name'
+    description: "SettleMint blockchain network unique name"
     required: false
   blockchain-node:
-    description: 'SettleMint blockchain node unique name'
+    description: "SettleMint blockchain node unique name"
     required: false
   load-balancer:
-    description: 'SettleMint load balancer unique name'
+    description: "SettleMint load balancer unique name"
     required: false
   hasura:
-    description: 'SettleMint Hasura unique name'
+    description: "SettleMint Hasura unique name"
     required: false
   thegraph:
-    description: 'SettleMint TheGraph unique name'
+    description: "SettleMint TheGraph unique name"
     required: false
   portal:
-    description: 'SettleMint Portal unique name'
+    description: "SettleMint Portal unique name"
     required: false
   hd-private-key:
-    description: 'SettleMint HD private key unique name'
+    description: "SettleMint HD private key unique name"
     required: false
   minio:
-    description: 'SettleMint MinIO unique name'
+    description: "SettleMint MinIO unique name"
     required: false
   ipfs:
-    description: 'SettleMint IPFS unique name'
+    description: "SettleMint IPFS unique name"
     required: false
   custom-deployment:
-    description: 'SettleMint custom deployment unique name'
+    description: "SettleMint custom deployment unique name"
     required: false
   blockscout:
-    description: 'SettleMint Blockscout unique name'
+    description: "SettleMint Blockscout unique name"
     required: false
   dotEnvFile:
-    description: 'A Github Actions secret containing the .env file, loaded in one go for easy updates'
+    description: "A Github Actions secret containing the .env file, loaded in one go for easy updates"
     required: false
   dotEnvLocalFile:
-    description: 'A Github Actions secret containing the .env.local file, loaded in one go for easy updates'
+    description: "A Github Actions secret containing the .env.local file, loaded in one go for easy updates"
     required: false
 
 runs:

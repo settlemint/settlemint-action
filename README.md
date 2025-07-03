@@ -72,27 +72,27 @@ steps:
 
 ### Optional
 
-| Input              | Description                        | Default                                                             |
-| ------------------ | ---------------------------------- | ------------------------------------------------------------------- |
-| command            | CLI command to execute             | -                                                                   |
-| version            | CLI version to install             | 'latest'                                                            |
-| auto-connect       | Automatically connect to workspace | 'true' (only executed when access-token is a personal access token) |
-| instance           | SettleMint instance URL            | 'https://console.settlemint.com'                                    |
-| workspace          | Workspace unique name              | -                                                                   |
-| application        | Application unique name            | -                                                                   |
-| blockchain-network | Blockchain network unique name     | -                                                                   |
-| blockchain-node    | Blockchain node unique name        | -                                                                   |
-| load-balancer      | Load balancer unique name          | -                                                                   |
-| hasura             | Hasura unique name                 | -                                                                   |
-| thegraph           | TheGraph unique name               | -                                                                   |
-| portal             | Portal unique name                 | -                                                                   |
-| hd-private-key     | HD private key                     | -                                                                   |
-| minio              | MinIO unique name                  | -                                                                   |
-| ipfs               | IPFS unique name                   | -                                                                   |
-| custom-deployment  | Custom deployment unique name      | -                                                                   |
-| blockscout         | Blockscout unique name             | -                                                                   |
-| dotEnvFile         | .env file content (store in secrets) | -                                                                 |
-| dotEnvLocalFile    | .env.local file content (store in secrets) | -                                                           |
+| Input              | Description                                | Default                                                           |
+| ------------------ | ------------------------------------------ | ----------------------------------------------------------------- |
+| command            | CLI command to execute                     | -                                                                 |
+| version            | CLI version to install                     | 'latest'                                                          |
+| auto-connect       | Automatically connect to workspace         | 'true' (personal access token) 'false' (application access token) |
+| instance           | SettleMint instance URL                    | 'https://console.settlemint.com'                                  |
+| workspace          | Workspace unique name                      | -                                                                 |
+| application        | Application unique name                    | -                                                                 |
+| blockchain-network | Blockchain network unique name             | -                                                                 |
+| blockchain-node    | Blockchain node unique name                | -                                                                 |
+| load-balancer      | Load balancer unique name                  | -                                                                 |
+| hasura             | Hasura unique name                         | -                                                                 |
+| thegraph           | TheGraph unique name                       | -                                                                 |
+| portal             | Portal unique name                         | -                                                                 |
+| hd-private-key     | HD private key                             | -                                                                 |
+| minio              | MinIO unique name                          | -                                                                 |
+| ipfs               | IPFS unique name                           | -                                                                 |
+| custom-deployment  | Custom deployment unique name              | -                                                                 |
+| blockscout         | Blockscout unique name                     | -                                                                 |
+| dotEnvFile         | .env file content (store in secrets)       | -                                                                 |
+| dotEnvLocalFile    | .env.local file content (store in secrets) | -                                                                 |
 
 ## Common Use Cases
 
@@ -212,9 +212,11 @@ steps:
 ### Common Issues
 
 #### Invalid Access Token
+
 **Error**: `Failed to authenticate with SettleMint: Error: Process completed with exit code 1. Please check your access token.`
 
-**Solution**: 
+**Solution**:
+
 - Ensure your access token is correctly stored in GitHub Secrets
 - Verify the token hasn't expired
 - Check that you're using the correct token format:
@@ -222,25 +224,31 @@ steps:
   - Application Tokens: `sm_app_xxxxx`
 
 #### Command Injection Prevention
+
 **Error**: `Command contains potentially dangerous characters. Please use simple commands only.`
 
 **Solution**:
+
 - Avoid using shell operators like `&&`, `||`, `;`, `|`, or backticks
 - Use simple, direct commands
 - If you need to run multiple commands, use multiple action steps
 
 #### Version Installation Failures
+
 **Error**: `Invalid version format: x.x.x. Must be a valid semver version or 'latest'`
 
 **Solution**:
+
 - Use valid semantic version numbers (e.g., `1.0.0`, `2.1.3`)
 - Use `latest` for the most recent version
 - Don't use version ranges or npm tags other than `latest`
 
 #### Environment Variable Issues
+
 **Problem**: Environment variables from `.env` files aren't being loaded
 
 **Solution**:
+
 - Ensure the env file content is stored in GitHub Secrets
 - Check that the file content follows the correct format:
   ```
@@ -251,9 +259,11 @@ steps:
 - Verify no shell metacharacters are in your values
 
 #### CLI Not Found
+
 **Error**: `settlemint: command not found`
 
 **Solution**:
+
 - The action should automatically install the CLI
 - If using a self-hosted runner, ensure npm is available
 - Check the action logs for installation errors
@@ -261,6 +271,7 @@ steps:
 ### Debugging Tips
 
 1. **Enable Debug Logging**:
+
    ```yaml
    - name: Run SettleMint CLI
      uses: settlemint/settlemint-action@main
@@ -276,6 +287,7 @@ steps:
 
 3. **Verify Workspace Connection**:
    If auto-connect fails, try connecting manually first:
+
    ```yaml
    - name: Connect to Workspace
      uses: settlemint/settlemint-action@main

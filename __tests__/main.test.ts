@@ -96,8 +96,6 @@ describe('action', () => {
           return 'status';
         case 'version':
           return 'latest';
-        case 'auto-connect':
-          return 'true';
         case 'access-token':
           return 'sm_pat_1234567890';
         default:
@@ -146,6 +144,34 @@ describe('action', () => {
     // Should NOT login with app token, but should still connect because auto-connect is true
     expect(execMock).not.toHaveBeenCalledWith('npx -y @settlemint/sdk-cli@latest', ['login', '-a']);
     expect(execMock).toHaveBeenCalledWith('npx -y @settlemint/sdk-cli@latest', ['connect', '-a']);
+    expect(execMock).toHaveBeenCalledWith('npx -y @settlemint/sdk-cli@latest', ['status']);
+  }, 30_000);
+
+  it('does not login and does not connect when using an application access token without auto-connect', async () => {
+    getInputMock.mockImplementation((name) => {
+      switch (name) {
+        case 'command':
+          return 'status';
+        case 'version':
+          return 'latest';
+        case 'access-token':
+          return 'sm_app_1234567890';
+        default:
+          return '';
+      }
+    });
+
+    await main.run();
+
+    // Application token should be set as environment variable
+    expect(process.env.SETTLEMINT_ACCESS_TOKEN).toBe('sm_app_1234567890');
+
+    // Access token should be masked
+    expect(_setSecretMock).toHaveBeenCalledWith('sm_app_1234567890');
+
+    // Should NOT login with app token, but should still connect because auto-connect is true
+    expect(execMock).not.toHaveBeenCalledWith('npx -y @settlemint/sdk-cli@latest', ['login', '-a']);
+    expect(execMock).not.toHaveBeenCalledWith('npx -y @settlemint/sdk-cli@latest', ['connect', '-a']);
     expect(execMock).toHaveBeenCalledWith('npx -y @settlemint/sdk-cli@latest', ['status']);
   }, 30_000);
 

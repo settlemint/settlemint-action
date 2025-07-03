@@ -75628,6 +75628,13 @@ function setEnvironmentVariables(inputs) {
         }
     }
 }
+function getAutoConnect(accessToken) {
+    const autoConnectValue = core.getInput('auto-connect');
+    if (!autoConnectValue) {
+        return isPersonalAccessToken(accessToken);
+    }
+    return autoConnectValue === 'true';
+}
 /**
  * The main function for the action.
  * @returns {Promise<void>} Resolves when the action is complete.
@@ -75637,7 +75644,7 @@ async function run() {
         const command = core.getInput('command');
         const version = core.getInput('version');
         const accessToken = core.getInput('access-token');
-        const autoConnect = core.getInput('auto-connect');
+        const autoConnect = getAutoConnect(accessToken);
         const instance = core.getInput('instance');
         // Validate version
         validateVersion(version);
@@ -75670,7 +75677,7 @@ async function run() {
             await exec.exec(settlemintCmd, ['login', '-a']);
         }
         // Only connect if not in standalone mode and auto-connect is enabled
-        if (!isStandalone && autoConnect === 'true') {
+        if (!isStandalone && autoConnect) {
             await exec.exec(settlemintCmd, ['connect', '-a']);
         }
         if (command) {
