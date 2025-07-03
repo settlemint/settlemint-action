@@ -259,6 +259,14 @@ function setEnvironmentVariables(inputs: Map<string, string>): void {
   }
 }
 
+function getAutoConnect(accessToken: string): boolean {
+  const autoConnectValue = core.getInput('auto-connect');
+  if (!autoConnectValue) {
+    return isPersonalAccessToken(accessToken);
+  }
+  return autoConnectValue === 'true';
+}
+
 /**
  * The main function for the action.
  * @returns {Promise<void>} Resolves when the action is complete.
@@ -268,7 +276,7 @@ export async function run(): Promise<void> {
     const command = core.getInput('command');
     const version = core.getInput('version');
     const accessToken = core.getInput('access-token');
-    const autoConnect = core.getInput('auto-connect');
+    const autoConnect = getAutoConnect(accessToken);
     const instance = core.getInput('instance');
 
     // Validate version
@@ -311,7 +319,7 @@ export async function run(): Promise<void> {
     }
 
     // Only connect if not in standalone mode and auto-connect is enabled
-    if (!isStandalone && autoConnect === 'true') {
+    if (!isStandalone && autoConnect) {
       await exec.exec(settlemintCmd, ['connect', '-a']);
     }
 
