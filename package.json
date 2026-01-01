@@ -88,7 +88,7 @@
     "make-coverage-badge": "^1.2.0",
     "ts-jest": "^29.3.4",
     "typescript": "^5.8.3",
-    "ultracite": "^5.0.29"
+    "ultracite": "^6.0.0"
   },
   "overrides": {
     "undici@<=6.21.2": "6.21.2",
