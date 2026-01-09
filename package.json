@@ -72,7 +72,7 @@
     "@actions/cache": "^4.0.3",
     "@actions/core": "^1.11.1",
     "@actions/exec": "^1.1.1",
-    "@actions/tool-cache": "^2.0.1",
+    "@actions/tool-cache": "^3.0.0",
     "semver": "^7.7.2"
   },
   "devDependencies": {
