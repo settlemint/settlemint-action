@@ -30,7 +30,7 @@ jobs:
     steps:
       - name: Checkout
         id: checkout
-        uses: namespacelabs/nscloud-checkout-action@953fed31a6113cc2347ca69c9d823743c65bc84b # v7
+        uses: namespacelabs/nscloud-checkout-action@99724ed126229e8e2a9cecf3a11c82611024862a # v8
 
       - name: Initialize CodeQL
         id: initialize
